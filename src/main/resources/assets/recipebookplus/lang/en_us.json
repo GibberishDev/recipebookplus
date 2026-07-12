@@ -1,3 +1,6 @@
 {
-  "recipebookplus.configuration.mod_enabled": "Mod enabled"
+  "recipebookplus.configuration.mod_enabled": "Mod enabled",
+  "recipebookplus.configuration.search_ungroup": "Ungroup recipies",
+  "recipebookplus.configuration.ingredient_prefix": "Search Prefix: Ingredient",
+  "recipebookplus.configuration.modid_prefix": "Search Prefix: ModID"
 }
