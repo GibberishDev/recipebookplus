@@ -1,7 +1,16 @@
 package com.gibbdev.recipebookplus;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.settings.KeyConflictContext;
+import net.neoforged.neoforge.client.settings.KeyModifier;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import net.neoforged.bus.api.IEventBus;
@@ -28,4 +37,12 @@ public class RecipeBookPlus {
     public void onServerStarting(ServerStartingEvent event) {
     }
 
+    public static final KeyMapping RECIPE_KEYBIND = new KeyMapping(
+                "recipebookplus.keymapping.recipe",
+                KeyConflictContext.GUI,
+                KeyModifier.CONTROL,
+                InputConstants.Type.KEYSYM,
+                GLFW.GLFW_KEY_R,
+                "key.categories.recipebookplus"
+    );
 }

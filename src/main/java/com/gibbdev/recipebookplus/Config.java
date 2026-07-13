@@ -9,10 +9,6 @@ public class Config {
             .translation("recipebookplus.configuration.mod_enabled")
             .comment("Determines if mod is enabled","If \"OFF\" reverts the recipe book to vanilla behavior")
             .define("mod_enabled", true);
-    public static final ModConfigSpec.BooleanValue SEARCH_UNGROUP = BUILDER
-            .translation("recipebookplus.configuration.search_ungroup")
-            .comment("If \"ON\" will ungroup any grouped recipe collections when searching with any of the custom selectors")
-            .define("search_ungroup", true);
     public static final ModConfigSpec.ConfigValue<String> INGREDIENT_PREFIX = BUILDER
             .translation("recipebookplus.configuration.ingredient_prefix")
             .comment("Determines prefix for search string to let recipe book know you are looking for recipies that use that item","Default: \"$\"")

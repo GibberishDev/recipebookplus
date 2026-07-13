@@ -3,6 +3,8 @@
   "package": "com.gibbdev.recipebookplus.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+  ],
+  "client": [
     "UpdateCollectionsMixin"
   ],
   "injectors": {

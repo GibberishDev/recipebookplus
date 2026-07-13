@@ -1,6 +1,12 @@
 {
   "recipebookplus.configuration.mod_enabled": "Mod enabled",
-  "recipebookplus.configuration.search_ungroup": "Ungroup recipies",
   "recipebookplus.configuration.ingredient_prefix": "Search Prefix: Ingredient",
-  "recipebookplus.configuration.modid_prefix": "Search Prefix: ModID"
+  "recipebookplus.configuration.modid_prefix": "Search Prefix: ModID",
+  "recipebookplus.gui.help_tooltip": "Recipe Book+\nPrefixes:\n  \"%s\" - search for recipes that use that item\n  \"%s\" - search for items from a certain mod",
+  "recipebookplus.gui.grouping": "Recipe grouping is enabled",
+  "recipebookplus.gui.not_grouping": "Recipe grouping is disabled",
+  "recipebookplus.configuration.modid_prefix.tooltip": "Determines prefix for search string to let recipe book know you are looking for recipies that are added by certain mod\nDefault: \"@\"",
+  "recipebookplus.configuration.mod_enabled.tooltip": "Determines if mod is enabled\nIf \"OFF\" reverts the recipe book to vanilla behavior",
+  "recipebookplus.configuration.ingredient_prefix.tooltip": "Determines prefix for search string to let recipe book know you are looking for recipies that use that item\nDefault: \"$\"",
+  "recipebookplus.configuration.title": "RecipeBook+ Configuration"
 }
