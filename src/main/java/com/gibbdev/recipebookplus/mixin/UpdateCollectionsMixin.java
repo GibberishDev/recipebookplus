@@ -13,7 +13,6 @@ import net.minecraft.client.gui.screens.recipebook.RecipeBookTabButton;
 import net.minecraft.client.gui.screens.recipebook.RecipeCollection;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.RecipeBookMenu;
@@ -24,7 +23,6 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -37,7 +35,7 @@ import java.util.stream.Collectors;
 @Mixin(RecipeBookComponent.class)
 public abstract class UpdateCollectionsMixin {
 
-    private boolean grouping = true;
+    private static boolean grouping = true;
 
     private static final WidgetSprites HELP_BUTTON = new WidgetSprites(
             ResourceLocation.fromNamespaceAndPath("recipebookplus","recipe_book/help"),
@@ -60,21 +58,23 @@ public abstract class UpdateCollectionsMixin {
     @Shadow private StackedContents stackedContents;
     @Shadow private RecipeBookMenu<?, ?> menu;
     @Shadow private Minecraft minecraft;
+    @Shadow private int width;
+    @Shadow private int height;
+    @Shadow private int xOffset;
+    @Shadow private boolean widthTooNarrow;
+
+//region Injects
 
     /**
      * Changes recipe collection list depending on advanced search terms
      * @Mixin {@link RecipeBookComponent#updateCollections(boolean)}
-     *
-     *
-     * @param resetPageNumber If true forces page reset to first page
-     * @param ci {@link CallbackInfo}
      */
     @Inject(method = "updateCollections",at = @At("HEAD"),cancellable = true)
     private void recipebookplus_updateCollections(boolean resetPageNumber,CallbackInfo ci) {
         if (!Config.MOD_ENABLED.getAsBoolean()) {return;}
         ci.cancel();
-        List<RecipeCollection> list = this.book.getCollection(this.selectedTab.getCategory());
-        list.forEach((collection) -> collection.canCraft(stackedContents, menu.getGridWidth(), menu.getGridHeight(), this.book));
+        List<RecipeCollection> list = book.getCollection(selectedTab.getCategory());
+        list.forEach((collection) -> collection.canCraft(stackedContents, menu.getGridWidth(), menu.getGridHeight(), book));
         List<RecipeCollection> list1 = Lists.newArrayList(list);
         list1.removeIf((collection) -> !collection.hasKnownRecipes());
         list1.removeIf((collection) -> !collection.hasFitting());
@@ -82,7 +82,7 @@ public abstract class UpdateCollectionsMixin {
 
 
         List<RecipeCollection> tempList = Lists.newArrayList(list1);
-        if (!this.grouping) {
+        if (!grouping) {
             for (RecipeCollection collection : tempList) {
                 if (collection.getRecipes().size() >= 2) {
                     List<RecipeHolder<?>> holders = new ArrayList<>();
@@ -90,7 +90,7 @@ public abstract class UpdateCollectionsMixin {
                     holders.addAll(collection.getDisplayRecipes(false));
                     for (RecipeHolder<?> holder : holders) {
                         RecipeCollection newCollection = new RecipeCollection(minecraft.level.registryAccess(), List.of(holder));
-                        newCollection.canCraft(stackedContents, menu.getGridWidth(), menu.getGridHeight(), this.book);
+                        newCollection.canCraft(stackedContents, menu.getGridWidth(), menu.getGridHeight(), book);
                         list1.add(list1.indexOf(collection), newCollection);
                     }
                     list1.remove(collection);
@@ -145,52 +145,77 @@ public abstract class UpdateCollectionsMixin {
             }
         }
 
-
-        if (book.isFiltering(this.menu)) {
+        if (book.isFiltering(menu)) {
             list1.removeIf((collection) -> !collection.hasCraftable());
         }
-
-        this.recipeBookPage.updateCollections(list1, resetPageNumber);
+        recipeBookPage.updateCollections(list1, resetPageNumber);
     }
-
-
-    @Shadow private int width;
-    @Shadow private int height;
-    @Shadow private int xOffset;
-    @Shadow private boolean widthTooNarrow;
 
     /**
      * Initialises aditional two ui elements - Help button (usage tooltip) and Group button
      * @Mixin {@link RecipeBookComponent#initVisuals()}
-     * @param ci {@link CallbackInfo}
      */
     @Inject(method = "initVisuals",at = @At("TAIL"),cancellable = false)
     public void recipebookplus_initVisuals(CallbackInfo ci) {
-        this.xOffset = this.widthTooNarrow ? 0 : 86;
-        int i = (this.width - 147) / 2 - this.xOffset;
-        int j = (this.height - 166) / 2;
-        //I DONT CARE THAT I USE BUTTON FOR THE STATIC TEXTURE. SUE ME
-        this.helpButton = new ImageButton(i + 110,j + 139,26,16,HELP_BUTTON, fuck -> helpButton());
-        helpButton.setTooltip(Tooltip.create(Component.translatable(
-                "recipebookplus.gui.help_tooltip",
-                Component.literal(Config.INGREDIENT_PREFIX.get()).withStyle(ChatFormatting.GOLD),
-                Component.literal(Config.MODID_PREFIX.get()).withStyle(ChatFormatting.GOLD)
-        )));
-        this.groupButton = new StateSwitchingButton(i+11,j+139,26,16,true);
-        groupButton.initTextureValues(GROUP_BUTTON);
+        if (Config.MOD_ENABLED.get()) {
+            xOffset = widthTooNarrow ? 0 : 86;
+            int i = (width - 147) / 2 - xOffset;
+            int j = (height - 166) / 2;
+            //I DONT CARE THAT I USE BUTTON FOR THE STATIC TEXTURE. SUE ME
+            helpButton = new ImageButton(i + 110,j + 139,26,16,HELP_BUTTON, fuck -> helpButton());
+            helpButton.setTooltip(Tooltip.create(Component.translatable(
+                    "recipebookplus.gui.help_tooltip",
+                    Component.literal(Config.INGREDIENT_PREFIX.get()).withStyle(ChatFormatting.GOLD),
+                    Component.literal(Config.MODID_PREFIX.get()).withStyle(ChatFormatting.GOLD),
+                    Component.keybind("recipebookplus.keymapping.recipe").withStyle(ChatFormatting.GREEN),
+                    Component.keybind("recipebookplus.keymapping.usage").withStyle(ChatFormatting.GREEN),
+                    Component.keybind("recipebookplus.keymapping.mod").withStyle(ChatFormatting.GREEN)
+            )));
+            groupButton = new StateSwitchingButton(i+11,j+139,26,16,true);
+            groupButton.initTextureValues(GROUP_BUTTON);
+        }
 
     }
 
-    @Shadow public abstract boolean isVisible();
-
-    @Inject(method = "render",at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/components/StateSwitchingButton;render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V"
-    ),cancellable = false)
+    /**
+     * Injects right before rendering craftable filter toggle button to render 2 new windgets
+     * @Mixin {@link RecipeBookComponent#render(GuiGraphics, int, int, float)}
+     */
+    @Inject(method="render",at=@At(value="INVOKE",target="Lnet/minecraft/client/gui/components/StateSwitchingButton;render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V"),cancellable=false)
     public void recipebookplus_render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
-        helpButton.render(guiGraphics,mouseX,mouseY,partialTick);
-        groupButton.render(guiGraphics,mouseX,mouseY,partialTick);
+        if (Config.MOD_ENABLED.get()) {
+            helpButton.render(guiGraphics,mouseX,mouseY,partialTick);
+            groupButton.render(guiGraphics,mouseX,mouseY,partialTick);
+        }
     }
+
+
+    /**
+     * Injects right before procesing the input of recipe book elements and hooks in processiong for the grouping button
+     * @Mixin {@link RecipeBookComponent#mouseClicked(double, double, int)}
+     */
+    @Inject(method="mouseClicked",at=@At(value = "INVOKE",target = "Lnet/minecraft/client/gui/components/EditBox;setFocused(Z)V"),cancellable = true)
+    public void mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
+        if (Config.MOD_ENABLED.get()) {
+            if (this.groupButton.mouseClicked(mouseX, mouseY, button)) {
+                this.toggleGrouping();
+                this.groupButton.setStateTriggered(grouping);
+                recipebookplus_updateCollections(true, new CallbackInfo("updateCollections", true));
+                cir.setReturnValue(true);
+            }
+        }
+    }
+
+//endregion
+
+//region misc methods
+
+
+    /**
+     *
+     * @param term
+     * @return
+     */
     private static List<ItemStack> searchItems(String term) {
         String namespace = getNamespace(term);
         if (!namespace.isEmpty()) {
@@ -204,6 +229,11 @@ public abstract class UpdateCollectionsMixin {
         }
     }
 
+    /**
+     * Processes input string to determine if it contains a valid namespace
+     * @param str {@link String} input string
+     * @return {@link  String} outputs valid namespace or empty string ("") if no fitting namesspaces were found
+     */
     private static String getNamespace(String str) {
         if (str.indexOf(":", str.indexOf(":")+1) != -1 || str.indexOf(":")==-1) return "";
         String testStr = str.split(":")[0];
@@ -212,33 +242,22 @@ public abstract class UpdateCollectionsMixin {
         return String.valueOf((namespaces.stream().filter(ns->ns.equals(testStr)).findFirst()));
     }
 
-    private void helpButton() {
-        return;
-    }
+    /**Dud method to plug in the requirement for callback for {@link ImageButton} {@link UpdateCollectionsMixin#helpButton}*/
+    private void helpButton() {return;}
 
-    private boolean toggleGrouping() {
+    /**Updates grouping of Recipe Collections and updates visuals for {@link UpdateCollectionsMixin#groupButton}*/
+    private void toggleGrouping() {
         grouping = !grouping;
         groupButton.setTooltip(grouping ? Tooltip.create(Component.translatable("recipebookplus.gui.grouping")) : Tooltip.create(Component.translatable("recipebookplus.gui.not_grouping")));
         groupButton.initTextureValues(GROUP_BUTTON);
-        return grouping;
     }
 
-    @Inject(method="mouseClicked",at=@At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/components/EditBox;setFocused(Z)V"
-        ),cancellable = true)
-    public void mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
-        if (this.groupButton.mouseClicked(mouseX, mouseY, button)) {
-            boolean grouping = this.toggleGrouping();
-            this.groupButton.setStateTriggered(grouping);
-            recipebookplus_updateCollections(true, new CallbackInfo("updateCollections", true));
-            cir.setReturnValue(true);
-        }
-    }
-
+    /**@ToDo: implement keybinds for entering search temrs based on the hovered item JEI style*/
     public void search(String searchTerm) {
         searchBox.setValue(searchTerm);
         recipebookplus_updateCollections(true, new CallbackInfo("updateCollections", true));
     }
+
+//endreion
 
 }

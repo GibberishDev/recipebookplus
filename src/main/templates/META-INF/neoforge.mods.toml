@@ -33,10 +33,10 @@ displayName="${mod_name}" #mandatory
 #updateJSONURL="https://change.me.example.invalid/updates.json" #optional
 
 # A URL for the "homepage" for this mod, displayed in the mod UI
-#displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
+displayURL="https://github.com/GibberishDev/recipebookplus/" #optional
 
 # A file name (in the root of the mod JAR) containing a logo for display
-#logoFile="examplemod.png" #optional
+logoFile="assets/recipebookplus/banner.png" #optional
 
 # A text field displayed in the mod UI
 #credits="" #optional
@@ -93,3 +93,6 @@ config="${mod_id}.mixins.json"
 # stop your mod loading on the server for example.
 #[features.${mod_id}]
 #openGLVersion="[3.2,)"
+[modproperties.${mod_id}]
+catalogueImageIcon = "assets/recipebookplus/icon.png"
+catalogueBackground = "assets/recipebookplus/background.png"

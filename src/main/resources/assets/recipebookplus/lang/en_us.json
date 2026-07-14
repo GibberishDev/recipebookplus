@@ -2,11 +2,17 @@
   "recipebookplus.configuration.mod_enabled": "Mod enabled",
   "recipebookplus.configuration.ingredient_prefix": "Search Prefix: Ingredient",
   "recipebookplus.configuration.modid_prefix": "Search Prefix: ModID",
-  "recipebookplus.gui.help_tooltip": "Recipe Book+\nPrefixes:\n  \"%s\" - search for recipes that use that item\n  \"%s\" - search for items from a certain mod",
+  "recipebookplus.gui.help_tooltip": "Recipe Book+\n§l§uPrefixes:§r\n\"%s\" - search for recipes that use that item\n\"%s\" - search for items from a certain mod\n§l§uKeybinds:§r\n[%s] - Search for item\n[%s] - Search for usages of that item\n[%s] - Search for mod",
   "recipebookplus.gui.grouping": "Recipe grouping is enabled",
   "recipebookplus.gui.not_grouping": "Recipe grouping is disabled",
   "recipebookplus.configuration.modid_prefix.tooltip": "Determines prefix for search string to let recipe book know you are looking for recipies that are added by certain mod\nDefault: \"@\"",
   "recipebookplus.configuration.mod_enabled.tooltip": "Determines if mod is enabled\nIf \"OFF\" reverts the recipe book to vanilla behavior",
   "recipebookplus.configuration.ingredient_prefix.tooltip": "Determines prefix for search string to let recipe book know you are looking for recipies that use that item\nDefault: \"$\"",
-  "recipebookplus.configuration.title": "RecipeBook+ Configuration"
+  "recipebookplus.configuration.title": "RecipeBook+ Configuration",
+  "key.categories.recipebookplus": "Recipe Book +",
+  "recipebookplus.keymapping.mod": "RB+ Search: Mod ID",
+  "recipebookplus.keymapping.recipe": "RB+ Search: Item Recipes",
+  "recipebookplus.keymapping.recipe_exact": "RB+ Search: Item ID Recipes",
+  "recipebookplus.keymapping.usage": "RB+ Search: Item Usages",
+  "recipebookplus.keymapping.usage_exact": "RB+ Search: Item ID Usages"
 }

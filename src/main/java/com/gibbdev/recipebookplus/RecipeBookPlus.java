@@ -36,13 +36,4 @@ public class RecipeBookPlus {
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
     }
-
-    public static final KeyMapping RECIPE_KEYBIND = new KeyMapping(
-                "recipebookplus.keymapping.recipe",
-                KeyConflictContext.GUI,
-                KeyModifier.CONTROL,
-                InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_R,
-                "key.categories.recipebookplus"
-    );
 }
