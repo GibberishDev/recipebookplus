@@ -129,36 +129,36 @@ public abstract class UpdateCollectionsMixin {
                     }
                     if (!ingredientFound) list1.remove(collection);
                 }
-                tempList = Lists.newArrayList(list1);
-                for (RecipeCollection collection : tempList) {
+
+                for (RecipeCollection collection : Lists.newArrayList(list1)) {
                     if (collection.getRecipes().size() >= 2) {
                         List<RecipeHolder<?>> holders = new ArrayList<>();
                         holders.addAll(collection.getDisplayRecipes(true));
                         holders.addAll(collection.getDisplayRecipes(false));
-                        List<RecipeHolder<?>> holdersRelevant = new ArrayList<>();
+                        List<RecipeHolder<?>> holdersRelevant = Lists.newArrayList(holders);
                         for (RecipeHolder<?> holder : holders) {
                             Recipe<?> recipe = holder.value();
+                            boolean ingredientFound = false;
                             for (Ingredient ingredient : recipe.getIngredients()) {
-                                boolean ingredientFound = false;
                                 for (ItemStack item : itemStacks) {
                                     if (ingredient.test(item)) {
-                                        holdersRelevant.add(holder);
                                         ingredientFound = true;
                                         break;
                                     }
                                 }
                                 if (ingredientFound) break;
                             }
+                            if (!ingredientFound) holdersRelevant.remove(holder);
                         }
-                        RecipeCollection newCollection = new RecipeCollection(ra, holdersRelevant);
-                        newCollection.canCraft(stackedContents, menu.getGridWidth(), menu.getGridHeight(), book);
-                        list1.add(list1.indexOf(collection), newCollection);
+
+                        if (!holdersRelevant.isEmpty()) {
+                            RecipeCollection newCollection = new RecipeCollection(ra, holdersRelevant);
+                            newCollection.canCraft(stackedContents, menu.getGridWidth(), menu.getGridHeight(), book);
+                            list1.add(list1.indexOf(collection), newCollection);
+                        }
                         list1.remove(collection);
                     }
                 }
-
-
-
             }
         } else if (s.startsWith(Config.MODID_PREFIX.get()) && !s.equals(Config.MODID_PREFIX.get())) {
             String searchTerm = s.replaceFirst(Matcher.quoteReplacement(Config.MODID_PREFIX.get()), "").strip();
@@ -198,9 +198,11 @@ public abstract class UpdateCollectionsMixin {
                             holdersRelevant.remove(holder);
                         }
                     }
-                    RecipeCollection newCollection = new RecipeCollection(ra, holdersRelevant);
-                    newCollection.canCraft(stackedContents, menu.getGridWidth(), menu.getGridHeight(), book);
-                    list1.add(list1.indexOf(collection), newCollection);
+                    if (!holdersRelevant.isEmpty()) {
+                        RecipeCollection newCollection = new RecipeCollection(ra, holdersRelevant);
+                        newCollection.canCraft(stackedContents, menu.getGridWidth(), menu.getGridHeight(), book);
+                        list1.add(list1.indexOf(collection), newCollection);
+                    }
                     list1.remove(collection);
                 }
             }
