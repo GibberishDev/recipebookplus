@@ -6,6 +6,10 @@ dependencies {
     minecraft("com.mojang:minecraft:${minecraft_version}")
     implementation("net.fabricmc:fabric-loader:${fabric_loader_version}")
     implementation("net.fabricmc.fabric-api:fabric-api:${fabric_version}")
+//    Mod Menu
+    implementation "maven.modrinth:mOgUt4GM:njXb639R"
+//    Cloth Config
+    implementation "maven.modrinth:9s6osm5g:Nv3xnWXd"
 }
 
 loom {
@@ -44,6 +48,21 @@ sourceSets.configureEach {
             attributes {
                 attribute(loaderAttribute, 'fabric')
             }
+        }
+    }
+}
+
+repositories {
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Modrinth"
+                url = "https://api.modrinth.com/maven"
+            }
+        }
+        // forRepositories(fg.repository) // Uncomment when using ForgeGradle
+        filter {
+            includeGroup "maven.modrinth"
         }
     }
 }

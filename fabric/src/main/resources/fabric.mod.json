@@ -17,6 +17,9 @@
     "entrypoints": {
         "main": [
             "com.gibbdev.recipebookplus.RecipeBookPlus"
+        ],
+        "modmenu": [
+            "com.gibbdev.recipebookplus.ModMenuIntegration"
         ]
     },
     "mixins": [

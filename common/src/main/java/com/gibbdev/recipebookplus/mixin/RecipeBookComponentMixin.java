@@ -1,5 +1,6 @@
 package com.gibbdev.recipebookplus.mixin;
 
+import com.gibbdev.recipebookplus.Config;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
@@ -107,18 +108,21 @@ public abstract class RecipeBookComponentMixin {
 
         if (!rbp$isGrouping) {
             for (RecipeCollection c : tempCollectionList) {
-                for (RecipeDisplayEntry recipe : c.getSelectedRecipes(RecipeCollection.CraftableStatus.ANY)) {
-                    RecipeCollection newCollection = new RecipeCollection(List.of(recipe));
-                    newCollection.selectRecipes(stackedContents,recipeDisplay -> true);
-                    collection.add(collection.indexOf(c),newCollection);
+                if (c.getSelectedRecipes(RecipeCollection.CraftableStatus.ANY).size() >= 2) {
+                    for (RecipeDisplayEntry recipe : c.getSelectedRecipes(RecipeCollection.CraftableStatus.ANY)) {
+                        RecipeCollection newCollection = new RecipeCollection(List.of(recipe));
+                        newCollection.selectRecipes(stackedContents,recipeDisplay -> true);
+                        collection.add(collection.indexOf(c),newCollection);
+                    }
+                    collection.remove(c);
                 }
-                collection.remove(c);
             }
         }
 
-        if (searchTerm.startsWith("$") && !searchTerm.equals("$")) {
-            searchTerm = searchTerm.replace("$","");
+        if (searchTerm.startsWith(Config.INSTANCE.getIngredientPrefix()) && !searchTerm.equals(Config.INSTANCE.getIngredientPrefix())) {
+            searchTerm = searchTerm.replaceFirst(Matcher.quoteReplacement(Config.INSTANCE.getIngredientPrefix()),"");
             List<ItemStack> searchItems = rbp$searchItems(searchTerm);
+            tempCollectionList = List.copyOf(collection);
             for (RecipeCollection c : tempCollectionList) {
                 List<RecipeDisplayEntry> validRecipes = new ArrayList<>();
                 for (RecipeDisplayEntry recipe : c.getSelectedRecipes(RecipeCollection.CraftableStatus.ANY)) {
@@ -180,7 +184,6 @@ public abstract class RecipeBookComponentMixin {
                     Component.keybind("recipebookplus.keymapping.usage").withStyle(ChatFormatting.GREEN),
                     Component.keybind("recipebookplus.keymapping.mod").withStyle(ChatFormatting.GREEN)
             )));
-            minecraft.player.sendSystemMessage(Component.literal(String.valueOf(rbp$isGrouping)));
             this.rbp$groupButton = CycleButton.booleanBuilder(Component.translatable("recipebookplus.gui.grouping"),Component.translatable("recipebookplus.gui.not_grouping"),rbp$isGrouping).withTooltip((rbp$isGrouping)->rbp$isGrouping?Tooltip.create(Component.translatable("recipebookplus.gui.grouping")):Tooltip.create(Component.translatable("recipebookplus.gui.not_grouping"))).withSprite((cycleButton, rbp$isGrouping) -> GROUP_BUTTON.get(rbp$isGrouping, cycleButton.isHoveredOrFocused())).displayState(CycleButton.DisplayState.HIDE).create(
                 i+11,j+139,26,16,
                 CommonComponents.EMPTY,

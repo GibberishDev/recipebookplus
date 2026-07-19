@@ -14,5 +14,7 @@ public class RecipeBookPlus implements ModInitializer {
         // Use Fabric to bootstrap the Common mod.
         Constants.LOG.info("Hello Fabric world!");
         CommonClass.init();
+        FabricConfig.load();
+        Config.INSTANCE = new FabricConfig();
     }
 }
