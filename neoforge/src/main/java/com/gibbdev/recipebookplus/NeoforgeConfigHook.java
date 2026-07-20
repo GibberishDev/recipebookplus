@@ -1,6 +1,8 @@
 package com.gibbdev.recipebookplus;
 
-public class NeoforgeConfigHook implements IConfig{
+import com.gibbdev.recipebookplus.interfaces.IConfig;
+
+public class NeoforgeConfigHook implements IConfig {
     @Override
     public boolean getModEnabled() {
         return NeoforgeConfig.MOD_ENABLED.get();

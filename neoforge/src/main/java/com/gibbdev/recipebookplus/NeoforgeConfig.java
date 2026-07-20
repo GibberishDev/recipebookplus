@@ -12,11 +12,11 @@ public class NeoforgeConfig{
             .define("mod_enabled", true);
     public static final ModConfigSpec.ConfigValue<String> INGREDIENT_PREFIX = BUILDER
             .translation("recipebookplus.configuration.ingredient_prefix")
-            .comment("Determines prefix for search string to let recipe book know you are looking for recipies that use that item","Default: \"$\"")
+            .comment("Determines prefix for search string to let recipe book know you are looking for recipes that use that item","Default: \"$\"")
             .define("ingredient_prefix","$");
     public static final ModConfigSpec.ConfigValue<String> MODID_PREFIX = BUILDER
             .translation("recipebookplus.configuration.modid_prefix")
-            .comment("Determines prefix for search string to let recipe book know you are looking for recipies that are added by certain mod","Default: \"@\"")
+            .comment("Determines prefix for search string to let recipe book know you are looking for recipes that are added by certain mod","Default: \"@\"")
             .define("modid_prefix","@");
 
     static final ModConfigSpec SPEC = BUILDER.build();

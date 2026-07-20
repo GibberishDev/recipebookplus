@@ -7,13 +7,18 @@
     "authors": [
         "${mod_author}"
     ],
+    "contributors": [
+        "Testing: Bronwen",
+        "Testing: Derivoid"
+    ],
     "contact": {
-        "homepage": "https://fabricmc.net/",
-        "sources": "https://github.com/FabricMC/fabric-example-mod"
+        "homepage": "https://github.com/GibberishDev/recipebookplus",
+        "sources": "https://github.com/GibberishDev/recipebookplus",
+        "issues": "https://github.com/GibberishDev/recipebookplus/issues"
     },
     "license": "${license}",
     "icon": "${mod_id}.png",
-    "environment": "*",
+    "environment": "client",
     "entrypoints": {
         "main": [
             "com.gibbdev.recipebookplus.RecipeBookPlus"

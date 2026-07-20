@@ -1,5 +1,6 @@
 package com.gibbdev.recipebookplus;
 
+import com.gibbdev.recipebookplus.interfaces.IConfig;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.loader.api.FabricLoader;

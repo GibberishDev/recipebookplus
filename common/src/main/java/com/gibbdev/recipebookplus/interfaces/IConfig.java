@@ -1,4 +1,4 @@
-package com.gibbdev.recipebookplus;
+package com.gibbdev.recipebookplus.interfaces;
 
 public interface IConfig {
 
