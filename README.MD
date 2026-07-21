@@ -1,5 +1,5 @@
-<p align="center"><img src="./common/src/main/resources/assets/recipebookplus/banner.png" alt="RecipeBook+" width="400"></p>
-<p align="center"><a href="https://www.curseforge.com/minecraft/mc-mods/recipe-book-plus">
+<p><img src="./common/src/main/resources/assets/recipebookplus/banner.png" alt="RecipeBook+" width="400"></p>
+<p><a href="https://www.curseforge.com/minecraft/mc-mods/recipe-book-plus">
 <img src="https://img.shields.io/curseforge/dt/1611335?style=for-the-badge&logo=curseforge&logoSize=auto&labelColor=black&color=%23eb622b"><img src="https://img.shields.io/curseforge/game-versions/1611335?style=for-the-badge&label=%20&color=black">
 </a>
 <br>
