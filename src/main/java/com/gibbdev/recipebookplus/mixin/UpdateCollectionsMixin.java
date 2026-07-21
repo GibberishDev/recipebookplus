@@ -174,12 +174,13 @@ public abstract class UpdateCollectionsMixin {
             }
 
         } else {
+            String ns = rbp$getNamespace(s);
             tempList = Lists.newArrayList(list1);
             for (RecipeCollection collection : tempList) {
                 boolean recipeFound = false;
                 for (RecipeHolder<?> holder : collection.getRecipes()) {
                     String resultItemName = holder.value().getResultItem(ra).getDisplayName().getString().toLowerCase(Locale.ROOT);
-                    if (resultItemName.contains(s)) {
+                    if ((resultItemName.contains(s) && ns.isEmpty()) || (resultItemName.equals(s) && !ns.isEmpty())) {
                         recipeFound = true;
                     }
                 }
@@ -194,7 +195,7 @@ public abstract class UpdateCollectionsMixin {
                     List<RecipeHolder<?>> holdersRelevant = Lists.newArrayList(holders);
                     for (RecipeHolder<?> holder : holders) {
                         String resultItemName = holder.value().getResultItem(ra).getDisplayName().getString().toLowerCase(Locale.ROOT);
-                        if (!resultItemName.contains(s)) {
+                        if ((!resultItemName.contains(s) && ns.isEmpty()) ||(!resultItemName.equals(s) && !ns.isEmpty()))  {
                             holdersRelevant.remove(holder);
                         }
                     }
@@ -278,7 +279,7 @@ public abstract class UpdateCollectionsMixin {
     private static List<ItemStack> rbp$searchItems(String term) {
         String namespace = rbp$getNamespace(term);
         if (!namespace.isEmpty()) {
-            return BuiltInRegistries.ITEM.stream().filter(item -> BuiltInRegistries.ITEM.getKey(item).toString().toLowerCase(Locale.ROOT).contains(term)).map(ItemStack::new).toList();
+            return BuiltInRegistries.ITEM.stream().filter(item -> BuiltInRegistries.ITEM.getKey(item).toString().toLowerCase(Locale.ROOT).equals(term)).map(ItemStack::new).toList();
         } else {
             return BuiltInRegistries.ITEM.stream().filter(item -> new ItemStack(item).getDisplayName().getString().toLowerCase(Locale.ROOT).contains(term)).map(ItemStack::new).toList();
         }

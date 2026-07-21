@@ -16,6 +16,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
@@ -25,6 +26,9 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 @Mod(value = RecipeBookPlus.MODID, dist = Dist.CLIENT)
 @EventBusSubscriber(modid = RecipeBookPlus.MODID, value = Dist.CLIENT)
@@ -47,7 +51,7 @@ public class RecipeBookPlusClient {
     }
 
     @SubscribeEvent
-    static void onKeybind(ScreenEvent.KeyPressed.Pre event) {
+    static void onKeybind(ScreenEvent.KeyPressed.Pre event) throws NoSuchMethodException {
         if (!Config.MOD_ENABLED.get()) return;
         Minecraft mc = Minecraft.getInstance();
         if (event.getScreen() instanceof AbstractContainerScreen screen) {
@@ -63,9 +67,22 @@ public class RecipeBookPlusClient {
                 case CraftingScreen scr -> rbc = scr.recipeBookComponent;
                 case AbstractFurnaceScreen scr -> rbc = scr.recipeBookComponent;
                 default -> {
-                    return;
+                    rbc = null;
                 }
             }
+            if (ModList.get().isLoaded("farmersdelight")) {
+                if (event.getScreen().getClass().getName().equals("vectorwing.farmersdelight.client.gui.CookingPotScreen")) {
+                    Method m = event.getScreen().getClass().getMethod("getRecipeBookComponent");
+                    try {
+                        rbc = (RecipeBookComponent) m.invoke(event.getScreen());
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    } catch (InvocationTargetException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+            if (rbc == null) return;
             if (!rbc.isVisible()) return;
             if (Keybinds.checkBind(Keybinds.RECIPE_KEYBIND, event)) {rbc.searchBox.setValue(itemName);}
             if (Keybinds.checkBind(Keybinds.RECIPE_EXACT_KEYBIND, event)) {rbc.searchBox.setValue(itemId);}
