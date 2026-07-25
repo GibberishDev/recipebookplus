@@ -14,5 +14,7 @@
   "recipebookplus.keymapping.recipe": "RB+ Search: Item Recipes",
   "recipebookplus.keymapping.recipe_exact": "RB+ Search: Item ID Recipes",
   "recipebookplus.keymapping.usage": "RB+ Search: Item Usages",
-  "recipebookplus.keymapping.usage_exact": "RB+ Search: Item ID Usages"
+  "recipebookplus.keymapping.usage_exact": "RB+ Search: Item ID Usages",
+  "recipebookplus.gui.recipe_book_button_show": "Show recipe book",
+  "recipebookplus.gui.recipe_book_button_hide": "Hide recipe book"
 }

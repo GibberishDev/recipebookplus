@@ -281,15 +281,19 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponentMi
                     Component.keybind("recipebookplus.keymapping.usage").withStyle(ChatFormatting.GREEN),
                     Component.keybind("recipebookplus.keymapping.mod").withStyle(ChatFormatting.GREEN)
             )));
-            this.rbp$groupButton = CycleButton.booleanBuilder(Component.translatable("recipebookplus.gui.grouping"),Component.translatable("recipebookplus.gui.not_grouping"),rbp$isGrouping).withTooltip((rbp$isGrouping)->rbp$isGrouping?Tooltip.create(Component.translatable("recipebookplus.gui.grouping")):Tooltip.create(Component.translatable("recipebookplus.gui.not_grouping"))).withSprite((cycleButton, rbp$isGrouping) -> GROUP_BUTTON.get(rbp$isGrouping, cycleButton.isHoveredOrFocused())).displayState(CycleButton.DisplayState.HIDE).create(
-                i+11,j+139,26,16,
-                CommonComponents.EMPTY,
-                (_, _) -> {
-                    rbp$isGrouping = !rbp$isGrouping;
-                    CommonClass.groupingState = rbp$isGrouping;
-                    sendUpdateSettings();
-                    updateCollections(true, book.isFiltering(menu.getRecipeBookType()));
-            });
+            this.rbp$groupButton = CycleButton.booleanBuilder(Component.translatable("recipebookplus.gui.grouping"),Component.translatable("recipebookplus.gui.not_grouping"),rbp$isGrouping)
+                    .withTooltip((rbp$isGrouping)->rbp$isGrouping?Tooltip.create(Component.translatable("recipebookplus.gui.grouping")):Tooltip.create(Component.translatable("recipebookplus.gui.not_grouping")))
+                    .withSprite((cycleButton, rbp$isGrouping) -> GROUP_BUTTON.get(rbp$isGrouping, cycleButton.isHoveredOrFocused()))
+                    .displayState(CycleButton.DisplayState.HIDE)
+                    .create(
+                        i+11,j+139,26,16,
+                        CommonComponents.EMPTY,
+                        (_, _) -> {
+                            rbp$isGrouping = !rbp$isGrouping;
+                            CommonClass.groupingState = rbp$isGrouping;
+                            sendUpdateSettings();
+                            updateCollections(true, book.isFiltering(menu.getRecipeBookType()));
+                    });
         }
 
     }
