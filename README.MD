@@ -11,11 +11,13 @@
 ### Features:
 <table style="border: none">
 <tr><td width="50%"><p align="center">Item Usages</p>
-<p>Allows searching for recipes that use that item as an ingredient. By default, search prefix is "$"</p></td><td><p align="center"><img src="./githubassets/ingredient-search-preview.png" height="200" ></p></td></tr>
-<tr><td><p align="center"><img src="./githubassets/mod-search-preview.png" height="200"></p></td><td><p align="center">Mod search</p>
+<p>Allows searching for recipes that use that item as an ingredient. By default, search prefix is "$"</p></td><td><p align="center"><img src="./githubassets/ingredient-search-preview.png"></p></td></tr>
+<tr><td><p align="center"><img src="./githubassets/mod-search-preview.png"></p></td><td><p align="center">Mod search</p>
 <p>Allows searching for items from certain mods. By default, search prefix is "@"</p></td></tr>
 <tr><td><p align="center">Recipe grouping toggle</p>
-<p>Ever looked at recipes inside the book and wondered why some of them are grouped? Or wanted to see all 16 colors of [Insert colored item here]? Well fret no more, as there is now handy toggle to that behavior!</p></td><td><p align="center"><img src="./githubassets/grouping-preview.png" height="200"></p></td></tr>
-<tr><td><p align="center"><img src="./githubassets/advanced-search-preview.png" height="200"></p></td><td><p align="center">Keybinds</p>
+<p>Ever looked at recipes inside the book and wondered why some of them are grouped? Or wanted to see all 16 colors of [Insert colored item here]? Well fret no more, as there is now handy toggle to that behavior!</p></td><td><p align="center"><img src="./githubassets/grouping-preview.png"></p></td></tr>
+<tr><td><p align="center"><img src="./githubassets/advanced-search-preview.png"></p></td><td><p align="center">Keybinds</p>
 <p>Useful keybinds to ease the process of searching. hover over an item <code>R</code> to input its name into search bar or press <code>U</code> to input it as an ingredient to search for its uses. You can also press <code>M</code> to search for namespace of the mod that adds hovered item. Holding <code>Control</code> while pressing <code>R</code> or <code>U</code> inputs exact item id so you would not search for some other things</p></td></tr>
+<tr><td><p align="center">New UI</p>
+<p>[v1.0.4+] New custom-built ui with fancy recipe book stylization. Boring plain vanilla ui begone! Don't worry, vanilla like ui can be enabled in config ;)</p></td><td><p align="center"><img src="./githubassets/custom-ui-preview.png"></p></td></tr>
 </table>
