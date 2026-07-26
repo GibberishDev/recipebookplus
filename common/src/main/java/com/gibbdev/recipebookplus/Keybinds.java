@@ -64,6 +64,7 @@ public class Keybinds {
                 ((IAbstractRecipeBookScreenMixin) screen).rbp$openRecipeBook();
                 searchBox = ((IRecipeBookComponentMixin) rbc).rbp$getSearchBox();
             }
+            if (searchBox == null) return;
             if (event.hasControlDown()) {
                 searchBox.setValue(BuiltInRegistries.ITEM.getKey(item.getItem()).toString());
             } else {
@@ -74,6 +75,7 @@ public class Keybinds {
                 ((IAbstractRecipeBookScreenMixin) screen).rbp$openRecipeBook();
                 searchBox = ((IRecipeBookComponentMixin) rbc).rbp$getSearchBox();
             }
+            if (searchBox == null) return;
             if (event.hasControlDown()) {
                 searchBox.setValue(Config.INSTANCE.getIngredientPrefix()+BuiltInRegistries.ITEM.getKey(item.getItem()));
             } else {
@@ -84,6 +86,7 @@ public class Keybinds {
                 ((IAbstractRecipeBookScreenMixin) screen).rbp$openRecipeBook();
                 searchBox = ((IRecipeBookComponentMixin) rbc).rbp$getSearchBox();
             }
+            if (searchBox == null) return;
             searchBox.setValue(Config.INSTANCE.getModidPrefix()+BuiltInRegistries.ITEM.getKey(item.getItem()).getNamespace());
         } else {
             return;

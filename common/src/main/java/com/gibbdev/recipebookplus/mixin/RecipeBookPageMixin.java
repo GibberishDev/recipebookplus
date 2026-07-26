@@ -67,17 +67,17 @@ public abstract class RecipeBookPageMixin {
 
     @Inject(method = "init", at=@At("HEAD"), cancellable = true)
     public void rbp$init(Minecraft minecraft, int xo, int yo, CallbackInfo ci) {
-        if (Config.INSTANCE.getModEnabled() && Config.INSTANCE.getUseCustomUI()) {
+        if (Config.INSTANCE.getModEnabled() && Config.INSTANCE.getUseCustomUI() && minecraft.player != null) {
             this.minecraft = minecraft;
             this.recipeBook = minecraft.player.getRecipeBook();
 
             for(int i = 0; i < this.buttons.size(); ++i) {
-                ((RecipeButton)this.buttons.get(i)).setPosition(xo + 11 + 25 * (i % 5), yo + 31 + 25 * (i / 5));
+                (this.buttons.get(i)).setPosition(xo + 11 + 25 * (i % 5), yo + 31 + 25 * (i / 5));
             }
 
-            this.forwardButton = new ImageButton(xo + 95, yo + 144, 12, 8, CUSTOM_PAGE_FORWARD_SPRITES, (button) -> this.updateArrowButtons(), NEXT_PAGE_TEXT);
+            this.forwardButton = new ImageButton(xo + 95, yo + 144, 12, 8, CUSTOM_PAGE_FORWARD_SPRITES, (_) -> this.updateArrowButtons(), NEXT_PAGE_TEXT);
             this.forwardButton.setTooltip(Tooltip.create(NEXT_PAGE_TEXT));
-            this.backButton = new ImageButton(xo + 38, yo + 144, 12, 8, CUSTOM_PAGE_BACKWARD_SPRITES, (button) -> this.updateArrowButtons(), PREVIOUS_PAGE_TEXT);
+            this.backButton = new ImageButton(xo + 38, yo + 144, 12, 8, CUSTOM_PAGE_BACKWARD_SPRITES, (_) -> this.updateArrowButtons(), PREVIOUS_PAGE_TEXT);
             this.backButton.setTooltip(Tooltip.create(PREVIOUS_PAGE_TEXT));
             ci.cancel();
         }
@@ -87,7 +87,7 @@ public abstract class RecipeBookPageMixin {
     public void rbp$extractRenderState(GuiGraphicsExtractor graphics, int xo, int yo, int mouseX, int mouseY, float a, CallbackInfo ci) {
         if (Config.INSTANCE.getModEnabled() && Config.INSTANCE.getUseCustomUI()) {
             if (this.totalPages > 1) {
-                Component pageNumbers = Component.translatable("gui.recipebook.page", new Object[]{this.currentPage + 1, this.totalPages});
+                Component pageNumbers = Component.translatable("gui.recipebook.page", this.currentPage + 1, this.totalPages);
                 int pWidth = this.minecraft.font.width(pageNumbers);
                 graphics.text(this.minecraft.font, pageNumbers, xo - (int) Math.round(pWidth / 2.0) + 73, yo + 145, -3439300,false);
             }
@@ -112,7 +112,6 @@ public abstract class RecipeBookPageMixin {
             graphics.nextStratum();
             this.overlay.extractRenderState(graphics, mouseX, mouseY, a);
             ci.cancel();
-            return;
         }
     }
 

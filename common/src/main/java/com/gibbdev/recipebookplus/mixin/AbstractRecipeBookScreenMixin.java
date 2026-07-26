@@ -34,7 +34,7 @@ public abstract class AbstractRecipeBookScreenMixin<T extends RecipeBookMenu> ex
             Identifier.fromNamespaceAndPath(Constants.MOD_ID, "custom_recipe_book/toggle_button_closed_highlight"),
             Identifier.fromNamespaceAndPath(Constants.MOD_ID, "custom_recipe_book/toggle_button_open_highlight"));
     @Unique
-    private CycleButton<Boolean> customMenuToggleButton;
+    private CycleButton<Boolean> rbp$customMenuToggleButton;
 
     @Shadow
     protected abstract ScreenPosition getRecipeBookButtonPosition();
@@ -55,12 +55,12 @@ public abstract class AbstractRecipeBookScreenMixin<T extends RecipeBookMenu> ex
         if (Config.INSTANCE.getModEnabled()) {
             ci.cancel();
             ScreenPosition buttonPos = this.getRecipeBookButtonPosition();
-            customMenuToggleButton = CycleButton.booleanBuilder(Component.empty(), Component.empty(), !recipeBookComponent.isVisible())
+            rbp$customMenuToggleButton = CycleButton.booleanBuilder(Component.empty(), Component.empty(), !recipeBookComponent.isVisible())
                     .withSprite((button, _) -> CUSTOM_RECIPE_BOOK_TOGGLE_BUTTON_SPRITES.get(!recipeBookComponent.isVisible(), button.isHovered()))
                     .withTooltip((_) -> !recipeBookComponent.isVisible() ? Tooltip.create(Component.translatable("recipebookplus.gui.recipe_book_button_show")) : Tooltip.create(Component.translatable("recipebookplus.gui.recipe_book_button_hide")))
                     .create(buttonPos.x(), buttonPos.y(), 23, 21, CommonComponents.EMPTY, (button, _) -> rbp$toggleRecipeBookViaButton(button));
-            customMenuToggleButton.setMessage(CommonComponents.EMPTY);
-            this.addRenderableWidget(customMenuToggleButton);
+            rbp$customMenuToggleButton.setMessage(CommonComponents.EMPTY);
+            this.addRenderableWidget(rbp$customMenuToggleButton);
             this.addWidget(this.recipeBookComponent);
         }
     }
@@ -73,7 +73,7 @@ public abstract class AbstractRecipeBookScreenMixin<T extends RecipeBookMenu> ex
 
     @Unique @Override
     public ItemStack rbp$getSlotUnderCursor() {
-        Slot slot = ((IAbstractContainerScreenMixin) (Object) this).rbp$getHoveredSlot();
+        Slot slot = ((IAbstractContainerScreenMixin) this).rbp$getHoveredSlot();
         if (slot == null) return null;
         if (slot.hasItem()) return slot.getItem();
         return null;
@@ -84,10 +84,10 @@ public abstract class AbstractRecipeBookScreenMixin<T extends RecipeBookMenu> ex
         this.recipeBookComponent.toggleVisibility();
         this.leftPos = this.recipeBookComponent.updateScreenPosition(this.width, this.imageWidth);
         ScreenPosition updatedButtonPos = this.getRecipeBookButtonPosition();
-        customMenuToggleButton.setPosition(updatedButtonPos.x(), updatedButtonPos.y());
-        customMenuToggleButton.setValue(!recipeBookComponent.isVisible());
+        rbp$customMenuToggleButton.setPosition(updatedButtonPos.x(), updatedButtonPos.y());
+        rbp$customMenuToggleButton.setValue(!recipeBookComponent.isVisible());
         this.onRecipeBookButtonClick();
-        customMenuToggleButton.setMessage(CommonComponents.EMPTY);
+        rbp$customMenuToggleButton.setMessage(CommonComponents.EMPTY);
     }
 
     @Unique
