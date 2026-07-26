@@ -25,16 +25,16 @@ public class FabricConfig implements IConfig {
     @Override public String getModidPrefix() {
         return modidPrefix;
     }
-    public static boolean useCustomUI = false;
+    public static boolean useCustomUI = true;
     @Override public boolean getUseCustomUI() {return useCustomUI;}
-    public static boolean displayHelpButton = false;
+    public static boolean displayHelpButton = true;
     @Override public boolean getDisplayHelpButton() {return displayHelpButton;}
 
     private static class Data {
         boolean modEnabled = true;
         String ingredientPrefix = "$";
         String modidPrefix = "@";
-        boolean useCustomUI = false;
+        boolean useCustomUI = true;
         boolean displayHelpButton = true;
     }
 

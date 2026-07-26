@@ -3,6 +3,7 @@ package com.gibbdev.recipebookplus.mixin;
 import com.gibbdev.recipebookplus.CommonClass;
 import com.gibbdev.recipebookplus.Config;
 import com.gibbdev.recipebookplus.Constants;
+import com.gibbdev.recipebookplus.interfaces.IRecipeBookButton;
 import com.gibbdev.recipebookplus.interfaces.IRecipeBookComponentMixin;
 import com.google.common.collect.Lists;
 import net.minecraft.ChatFormatting;
@@ -10,10 +11,7 @@ import net.minecraft.client.ClientRecipeBook;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.*;
-import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
-import net.minecraft.client.gui.screens.recipebook.RecipeBookPage;
-import net.minecraft.client.gui.screens.recipebook.RecipeBookTabButton;
-import net.minecraft.client.gui.screens.recipebook.RecipeCollection;
+import net.minecraft.client.gui.screens.recipebook.*;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -23,6 +21,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.StackedItemContents;
 import net.minecraft.world.inventory.RecipeBookMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.ExtendedRecipeBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.display.RecipeDisplayEntry;
 import net.minecraft.world.item.crafting.display.SlotDisplayContext;
@@ -109,6 +108,8 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponentMi
     private int xOffset;
     @Shadow
     private int width;
+    @Shadow
+    private int height;
     @Shadow
     private boolean widthTooNarrow;
     @Shadow @Final
@@ -372,7 +373,7 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponentMi
                     this.rbp$helpButton.setTooltip(rbp$getHelpButtonTooltip());
                 }
                 // endregion
-
+                // region tab buttons
                 this.tabButtons.clear();
                 for(RecipeBookComponent.TabInfo tabInfo : this.tabInfos) {
                     this.tabButtons.add(new RecipeBookTabButton(0, 0, tabInfo, this::onTabButtonPress));
@@ -386,7 +387,7 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponentMi
                 this.selectedTab.select();
                 this.selectMatchingRecipes();
                 this.updateTabs(isFiltering);
-
+                // endregion
                 this.updateCollections(false, isFiltering);
 
                 ci.cancel();
@@ -487,6 +488,29 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponentMi
     private void getXOrigin(CallbackInfoReturnable<Integer> cir) {
         if (Config.INSTANCE.getModEnabled() && Config.INSTANCE.getUseCustomUI()) {
             cir.setReturnValue((int) Math.round((this.width - 147) / 2.0) - this.xOffset - 1);
+        }
+    }
+
+    @Inject(method = "updateTabs", at=@At("HEAD"), cancellable = true)
+    private void rbp$updateTabs(boolean isFiltering, CallbackInfo ci) {
+        if (Config.INSTANCE.getModEnabled() && Config.INSTANCE.getUseCustomUI()) {
+            int xPosTab = (int) Math.round((this.width - 147) / 2.0) - this.xOffset - 28;
+            int yPosTab = (int) Math.round((this.height - 166) / 2.0) + 3;
+            int yOffset = 21;
+            int index = 0;
+
+            for (RecipeBookTabButton tabButton : this.tabButtons) {
+                ExtendedRecipeBookCategory category = tabButton.getCategory();
+                if (category instanceof SearchRecipeBookCategory) {
+                    tabButton.visible = true;
+                    tabButton.setPosition(xPosTab, yPosTab + yOffset * index++);
+                } else if (tabButton.updateVisibility(this.book)) {
+                    tabButton.setPosition(xPosTab, yPosTab + yOffset * index++);
+                    tabButton.startAnimation(this.book, isFiltering);
+                }
+                ((IRecipeBookButton) tabButton).rbp$setColor((int) Math.round(Math.random() * 2) + 1);
+            }
+            ci.cancel();
         }
     }
 

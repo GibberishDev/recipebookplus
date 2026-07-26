@@ -9,7 +9,8 @@
     "AbstractRecipeBookScreenMixin",
     "AbstractContainerScreenMixin",
     "RecipeBookPageMixin",
-    "RecipeButtonMixin"
+    "RecipeButtonMixin",
+    "RecipeBookTabButtonMixin"
   ],
   "server": [],
   "injectors": {

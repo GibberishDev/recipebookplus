@@ -39,7 +39,7 @@ public class ModMenuConfigScreen {
         general.addEntry(entries.startBooleanToggle(
                         Component.translatable("recipebookplus.configuration.use_custom_ui"),
                         FabricConfig.useCustomUI)
-                .setDefaultValue(false)
+                .setDefaultValue(true)
                 .setSaveConsumer(value -> FabricConfig.useCustomUI = value)
                 .setTooltip(Component.translatable("recipebookplus.configuration.use_custom_ui.tooltip"))
                 .build());

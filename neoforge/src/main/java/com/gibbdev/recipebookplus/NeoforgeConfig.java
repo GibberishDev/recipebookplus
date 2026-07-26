@@ -21,7 +21,7 @@ public class NeoforgeConfig{
     public static final ModConfigSpec.BooleanValue USE_CUSTOM_UI = BUILDER
             .translation("recipebookplus.configuration.use_custom_ui")
             .comment("Determines which recipe book UI to use. If \"ON\" then new custom ui is used. Otherwise modified vanilla one will be rendered")
-            .define("use_custom_ui", false);
+            .define("use_custom_ui", true);
     public static final ModConfigSpec.BooleanValue DISPLAY_HELP_BUTTON = BUILDER
             .translation("recipebookplus.configuration.display_help")
             .comment("If \"ON\" then there will be help element on recipe book screen that will display controls and prefixes in a tooltip")
