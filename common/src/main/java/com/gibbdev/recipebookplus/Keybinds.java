@@ -49,31 +49,41 @@ public class Keybinds {
     }
 
     public static void KeybindEvent(Screen screen, KeyEvent event) {
+        if (!Config.INSTANCE.getModEnabled()) return;
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.level == null || mc.getConnection() == null) return;
         if (!(screen instanceof IAbstractRecipeBookScreenMixin)) return;
         if (!RECIPE_KEYBIND.matches(event) && !USAGE_KEYBIND.matches(event) && !MOD_KEYBIND.matches(event)) return;
         RecipeBookComponent<?> rbc = ((IAbstractRecipeBookScreenMixin) screen).rbp$getRecipeBookComponent();
-        if (!rbc.isVisible()) return;
         EditBox searchBox = null;
         if (rbc instanceof IRecipeBookComponentMixin) searchBox = ((IRecipeBookComponentMixin) rbc).rbp$getSearchBox();
-        if (searchBox == null) return;
         ItemStack item = ((IAbstractRecipeBookScreenMixin) screen).rbp$getSlotUnderCursor();
         if (item == null) return;
-        searchBox.setFocused(false);
         if (RECIPE_KEYBIND.matches(event)) {
+            if (!rbc.isVisible()) {
+                ((IAbstractRecipeBookScreenMixin) screen).rbp$openRecipeBook();
+                searchBox = ((IRecipeBookComponentMixin) rbc).rbp$getSearchBox();
+            }
             if (event.hasControlDown()) {
                 searchBox.setValue(BuiltInRegistries.ITEM.getKey(item.getItem()).toString());
             } else {
                 searchBox.setValue(Component.translatable(item.getItem().getDescriptionId()).getString());
             }
         } else if (USAGE_KEYBIND.matches(event)) {
+            if (!rbc.isVisible()) {
+                ((IAbstractRecipeBookScreenMixin) screen).rbp$openRecipeBook();
+                searchBox = ((IRecipeBookComponentMixin) rbc).rbp$getSearchBox();
+            }
             if (event.hasControlDown()) {
                 searchBox.setValue(Config.INSTANCE.getIngredientPrefix()+BuiltInRegistries.ITEM.getKey(item.getItem()));
             } else {
                 searchBox.setValue(Config.INSTANCE.getIngredientPrefix()+Component.translatable(item.getItem().getDescriptionId()).getString());
             }
         } else if (MOD_KEYBIND.matches(event)) {
+            if (!rbc.isVisible()) {
+                ((IAbstractRecipeBookScreenMixin) screen).rbp$openRecipeBook();
+                searchBox = ((IRecipeBookComponentMixin) rbc).rbp$getSearchBox();
+            }
             searchBox.setValue(Config.INSTANCE.getModidPrefix()+BuiltInRegistries.ITEM.getKey(item.getItem()).getNamespace());
         } else {
             return;

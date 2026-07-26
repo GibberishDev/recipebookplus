@@ -36,6 +36,20 @@ public class ModMenuConfigScreen {
                 .setSaveConsumer(value -> FabricConfig.modidPrefix = value)
                 .setTooltip(Component.translatable("recipebookplus.configuration.modid_prefix.tooltip"))
                 .build());
+        general.addEntry(entries.startBooleanToggle(
+                        Component.translatable("recipebookplus.configuration.use_custom_ui"),
+                        FabricConfig.useCustomUI)
+                .setDefaultValue(false)
+                .setSaveConsumer(value -> FabricConfig.useCustomUI = value)
+                .setTooltip(Component.translatable("recipebookplus.configuration.use_custom_ui.tooltip"))
+                .build());
+        general.addEntry(entries.startBooleanToggle(
+                        Component.translatable("recipebookplus.configuration.display_help"),
+                        FabricConfig.displayHelpButton)
+                .setDefaultValue(true)
+                .setSaveConsumer(value -> FabricConfig.displayHelpButton = value)
+                .setTooltip(Component.translatable("recipebookplus.configuration.display_help.tooltip"))
+                .build());
 
 
 

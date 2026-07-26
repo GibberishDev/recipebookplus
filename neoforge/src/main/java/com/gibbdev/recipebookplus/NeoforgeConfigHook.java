@@ -17,4 +17,13 @@ public class NeoforgeConfigHook implements IConfig {
     public String getModidPrefix() {
         return NeoforgeConfig.MODID_PREFIX.get();
     }
+
+    @Override
+    public boolean getUseCustomUI() {
+        return NeoforgeConfig.USE_CUSTOM_UI.get();
+    }
+    @Override
+    public boolean getDisplayHelpButton() {
+        return NeoforgeConfig.DISPLAY_HELP_BUTTON.get();
+    }
 }

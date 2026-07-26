@@ -18,6 +18,14 @@ public class NeoforgeConfig{
             .translation("recipebookplus.configuration.modid_prefix")
             .comment("Determines prefix for search string to let recipe book know you are looking for recipes that are added by certain mod","Default: \"@\"")
             .define("modid_prefix","@");
+    public static final ModConfigSpec.BooleanValue USE_CUSTOM_UI = BUILDER
+            .translation("recipebookplus.configuration.use_custom_ui")
+            .comment("Determines which recipe book UI to use. If \"ON\" then new custom ui is used. Otherwise modified vanilla one will be rendered")
+            .define("use_custom_ui", false);
+    public static final ModConfigSpec.BooleanValue DISPLAY_HELP_BUTTON = BUILDER
+            .translation("recipebookplus.configuration.display_help")
+            .comment("If \"ON\" then there will be help element on recipe book screen that will display controls and prefixes in a tooltip")
+            .define("display_help_button", true);
 
     static final ModConfigSpec SPEC = BUILDER.build();
 }

@@ -16,5 +16,9 @@
   "recipebookplus.keymapping.usage": "RB+ Search: Item Usages",
   "recipebookplus.keymapping.usage_exact": "RB+ Search: Item ID Usages",
   "recipebookplus.gui.recipe_book_button_show": "Show recipe book",
-  "recipebookplus.gui.recipe_book_button_hide": "Hide recipe book"
+  "recipebookplus.gui.recipe_book_button_hide": "Hide recipe book",
+  "recipebookplus.configuration.use_custom_ui": "Use custom ui [TESTING]",
+  "recipebookplus.configuration.use_custom_ui.tooltip": "Determines which recipe book UI to use. If \"ON\" then new custom ui is used. Otherwise modified vanilla one will be rendered",
+  "recipebookplus.configuration.display_help": "Display help widget",
+  "recipebookplus.configuration.display_help.tooltip": "If \"ON\" then there will be help element on recipe book screen that will display controls and prefixes in a tooltip"
 }
