@@ -15,6 +15,7 @@
 <tr><td><p align="center">New UI</p>
 <p>[v1.0.4+] New custom-built ui with fancy recipe book stylization. Boring plain vanilla ui begone! Don't worry, vanilla like ui can be enabled in config ;)</p></td><td><p align="center"><img src="./githubassets/custom-ui-preview.png"></p></td></tr>
 </table>
+
 ### Future
 
 <p>This mod is under development right now and I would love to add many more features. BUT I am quite new to mod development and to Java programming in general so some of those features might never see the light of day.</p><p>Right now I have following features in mind:</p>
