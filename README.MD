@@ -30,6 +30,6 @@
 <li>Fullscreen recipe book
   <ul><li> Allow user to open book in fullscreen to view recipes not for current workstation akin JEI. No need to place down a furnace to see what smelting recipes user has</li></ul></li>
 <li>Support other types of stations
-  <ul><li> Allow new recipe book locations. Some of those may include: Brewing stand, Smithing Table or some Modded screens that require additional compatibility</li></ul></li></ul>
+  <ul><li> Allow new recipe book locations. Some of those may include: Brewing stand, Smithing Table or some Modded screens that require additional compatibility</li></ul></li>
 <li>Support other versions and modloaders
   <ul><li> I want to support main modding version starting 1.21.1 neoforge and fabric</li></ul></li></ul>
