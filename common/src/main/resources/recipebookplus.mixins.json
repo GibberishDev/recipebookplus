@@ -6,6 +6,10 @@
   "compatibilityLevel": "JAVA_18",
   "mixins": [],
   "client": [
+    "AbstractContainerScreenMixin",
+    "AbstractFurnaceScreenMixin",
+    "CraftingScreenMixin",
+    "InventoryScreenMixin",
     "RecipeBookComponentMixin"
   ],
   "server": [],

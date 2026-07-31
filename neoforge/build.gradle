@@ -42,3 +42,11 @@ neoForge {
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+dependencies {
+    implementation "vectorwing.farmersdelight:FarmersDelight:1.21.1-1.3.0-rc2"
+}
+
+repositories {
+    maven {url = "https://maven.greenhouse.lgbt/snapshots"}
+}

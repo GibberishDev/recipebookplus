@@ -15,3 +15,18 @@
 <tr><td><p align="center">New UI</p>
 <p>[v1.0.4+] New custom-built ui with fancy recipe book stylization. Boring plain vanilla ui begone! Don't worry, vanilla like ui can be enabled in config ;)</p></td><td><p align="center"><img src="./githubassets/custom-ui-preview.png"></p></td></tr>
 </table>
+### Future
+
+<p>This mod is under development right now and I would love to add many more features. BUT I am quite new to mod development and to Java programming in general so some of those features might never see the light of day.</p><p>Right now I have following features in mind:</p>
+<ul>
+<li> Improved search:
+  <ul><li> Allow logic AND and OR to be included in search. This will allow for technical users to combine search parameters for fine tuned searching. (For example searching "block&$diamond" would find any recipe that makes block and has diamond something as an ingredient. Or "@minecraft|@supplementaries" to search for any recipe from minecraft or supplementaries)</li>
+  <li> Search optimization and caching. Its not a secret minecrafts native recipe solution isn't optimized and my mod _currently_ isn't that far off. even if vanilla recipes aren't that numerous it may freeze the game on lower end systems as it literally cycles through every recipe to find a match. So Sort and other improvements are in order.</li>
+  <li> Tag search. This one is simple. search by tags item may have instead of name or id</li></ul></li>
+<li>Favorites (or bookmarked recipes):
+  <ul><li> Allow user to bookmark any recipe to find it easier next time. Add a little star in the corner or golden frame idk. Maybe make favorites recipes appear in front of the book on the first page instead of alphabetic sort</li>
+  <li>Favorites tab. Or shove them into separate tab. xd</li></ul></li>
+<li>Fullscreen recipe book
+  <ul><li> Allow user to open book in fullscreen to view recipes not for current workstation akin JEI. No need to place down a furnace to see what smelting recipes user has</li></ul></li>
+<li>Support other types of stations
+  <ul><li> Allow new recipe book locations. Some of those may include: Brewing stand, Smithing Table or some Modded screens that require additional compatibility</li></ul></li></ul>
