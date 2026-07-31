@@ -17,7 +17,6 @@ import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.recipebook.*;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.recipebook.PlaceRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.StackedContents;
@@ -33,7 +32,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import vectorwing.farmersdelight.common.crafting.CookingPotRecipe;
-import vectorwing.farmersdelight.common.registry.ModRecipeTypes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -146,10 +144,8 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
                                 ingredient -> !(searchItems.stream().filter(ingredient).toList().isEmpty())
                         ).toList().isEmpty();
                         if (Services.PLATFORM.isModLoaded("farmersdelight") && !ingredientFound) {
-                            if (holder.value().getType() == ModRecipeTypes.COOKING.get()) {
-                                ItemStack containerItem = ((CookingPotRecipe) holder.value()).getOutputContainer();
-                                ingredientFound = !searchItems.stream().filter(item->containerItem.getItem().equals(item.getItem())).toList().isEmpty();
-                            }
+                            ItemStack containerItem = ((CookingPotRecipe) holder.value()).getOutputContainer();
+                            ingredientFound = !searchItems.stream().filter(item->containerItem.getItem().equals(item.getItem())).toList().isEmpty();
                         }
                         return ingredientFound;
                     }

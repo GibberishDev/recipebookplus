@@ -2,6 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.gibbdev.recipebookplus.mixin",
+  "plugin": "com.gibbdev.recipebookplus.ConditionalMixinPlugin",
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_18",
   "mixins": [],
@@ -10,7 +11,8 @@
     "AbstractFurnaceScreenMixin",
     "CraftingScreenMixin",
     "InventoryScreenMixin",
-    "RecipeBookComponentMixin"
+    "RecipeBookComponentMixin",
+    "CookingPotScreenMixin"
   ],
   "server": [],
   "injectors": {
