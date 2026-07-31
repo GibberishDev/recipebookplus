@@ -32,4 +32,4 @@
 <li>Support other types of stations
   <ul><li> Allow new recipe book locations. Some of those may include: Brewing stand, Smithing Table or some Modded screens that require additional compatibility</li></ul></li>
 <li>Support other versions and modloaders
-  <ul><li> I want to support main modding version starting 1.21.1 neoforge and fabric</li></ul></li></ul>
+  <ul><li> I want to support main modding versions starting 1.21.1 neoforge and fabric</li></ul></li></ul>
