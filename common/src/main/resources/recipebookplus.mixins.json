@@ -9,10 +9,14 @@
   "client": [
     "AbstractContainerScreenMixin",
     "AbstractFurnaceScreenMixin",
+    "CookingPotScreenMixin",
     "CraftingScreenMixin",
+    "EditBoxMixin",
     "InventoryScreenMixin",
+    "RecipeBookButtonMixin",
     "RecipeBookComponentMixin",
-    "CookingPotScreenMixin"
+    "RecipeBookPageMixin",
+    "RecipeButtonMixin"
   ],
   "server": [],
   "injectors": {

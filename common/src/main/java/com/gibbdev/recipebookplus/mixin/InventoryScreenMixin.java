@@ -55,7 +55,7 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
     protected void rbp$init(CallbackInfo ci) {
         if (Config.INSTANCE.getModEnabled() && Config.INSTANCE.getUseCustomUI() && this.minecraft != null && this.minecraft.gameMode != null && this.minecraft.player != null) {
             if (this.minecraft.gameMode.hasInfiniteItems()) {
-                this.minecraft.setScreen(new CreativeModeInventoryScreen(this.minecraft.player, this.minecraft.player.connection.enabledFeatures(), (Boolean) this.minecraft.options.operatorItemsTab().get()));
+                this.minecraft.setScreen(new CreativeModeInventoryScreen(this.minecraft.player, this.minecraft.player.connection.enabledFeatures(), this.minecraft.options.operatorItemsTab().get()));
             } else {
                 super.init();
                 this.widthTooNarrow = this.width < 379;

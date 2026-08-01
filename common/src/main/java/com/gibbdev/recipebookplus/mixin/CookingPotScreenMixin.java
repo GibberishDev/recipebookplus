@@ -3,7 +3,6 @@ package com.gibbdev.recipebookplus.mixin;
 import com.gibbdev.recipebookplus.Config;
 import com.gibbdev.recipebookplus.Constants;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.StateSwitchingButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
@@ -11,7 +10,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.RecipeBookMenu;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -38,7 +37,7 @@ public abstract class CookingPotScreenMixin extends AbstractContainerScreen<Cook
     private CookingPotRecipeBookComponent recipeBookComponent;
 
     @Shadow @Override
-    protected abstract void renderBg(GuiGraphics guiGraphics, float v, int i, int i1);
+    protected abstract void renderBg(@NotNull GuiGraphics gui, float partialTicks, int mouseX, int mouseY);
     @Shadow
     protected abstract void renderMealDisplayTooltip(GuiGraphics gui, int mouseX, int mouseY);
     @Shadow
@@ -56,13 +55,13 @@ public abstract class CookingPotScreenMixin extends AbstractContainerScreen<Cook
 
     @Inject(method = "init", at = @At("HEAD"), cancellable = true)
     public void rbp$init(CallbackInfo ci) {
-        if (Config.INSTANCE.getModEnabled() && Config.INSTANCE.getUseCustomUI()) {
+        if (Config.INSTANCE.getModEnabled() && Config.INSTANCE.getUseCustomUI() && this.minecraft !=null) {
             super.init();
             this.widthTooNarrow = this.width < 379;
             this.titleLabelX = 28;
-            this.recipeBookComponent.init(this.width, this.height, this.minecraft, this.widthTooNarrow, (RecipeBookMenu) this.menu);
+            this.recipeBookComponent.init(this.width, this.height, this.minecraft, this.widthTooNarrow, this.menu);
             this.leftPos = this.recipeBookComponent.updateScreenPosition(this.width, this.imageWidth);
-            if ((Boolean) Configuration.ENABLE_COOKING_POT_RECIPE_BOOK.get()) {
+            if (Configuration.ENABLE_COOKING_POT_RECIPE_BOOK.get()) {
                 rbp$toggleRecipeBookButton = new StateSwitchingButton(this.leftPos + 5, this.height / 2 - 49, 23, 21, !this.recipeBookComponent.isVisible());
                 rbp$toggleRecipeBookButton.initTextureValues(CUSTOM_RECIPE_BOOK_TOGGLE_BUTTON_SPRITES);
                 rbp$toggleRecipeBookButton.setTooltip(Tooltip.create(this.recipeBookComponent.isVisible() ? Component.translatable("recipebookplus.gui.recipe_book_button_hide") : Component.translatable("recipebookplus.gui.recipe_book_button_show")));
@@ -110,8 +109,7 @@ public abstract class CookingPotScreenMixin extends AbstractContainerScreen<Cook
                 rbp$toggleRecipeBookButton.initTextureValues(CUSTOM_RECIPE_BOOK_TOGGLE_BUTTON_SPRITES);
                 rbp$toggleRecipeBookButton.setTooltip(Tooltip.create(this.recipeBookComponent.isVisible() ? Component.translatable("recipebookplus.gui.recipe_book_button_hide") : Component.translatable("recipebookplus.gui.recipe_book_button_show")));
                 cir.setReturnValue(true);
-
-            }
+            } else
             cir.setReturnValue(this.widthTooNarrow && this.recipeBookComponent.isVisible() || super.mouseClicked(mouseX, mouseY, buttonId));
         }
     }
