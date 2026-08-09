@@ -304,6 +304,8 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponentMi
             collection.removeIf((c) -> !c.hasCraftable());
         }
 
+
+
         this.recipeBookPage.updateCollections(collection, resetPage, isFiltering);
     }
 
