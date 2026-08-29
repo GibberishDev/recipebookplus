@@ -27,7 +27,9 @@ import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.RecipeBookMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -125,11 +127,17 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
     private static final WidgetSprites CUSTOM_HELP_BUTTON = new WidgetSprites(
             ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID,"custom_recipe_book/hover_widget_help"),
             ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID,"custom_recipe_book/hover_widget_help"));
+    @Unique
+    private static final WidgetSprites CUSTOM_FULLSCREEN_BUTTON = new WidgetSprites(
+            ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID,"custom_recipe_book/hover_widget_help"),
+            ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID,"custom_recipe_book/hover_widget_help"));
 
     @Unique
     private StateSwitchingButton rbp$groupButton;
     @Unique
     private ImageButton rbp$helpButton;
+    @Unique
+    private ImageButton rbp$fullscreenButton;
 
     // endregion
 
@@ -137,6 +145,24 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
     @Inject(method = "updateCollections", at=@At("HEAD"), cancellable = true)
     private void rbp$updateCollections(boolean resetPage, CallbackInfo ci) {
         if (Config.INSTANCE.getModEnabled()) {
+            RecipeManager manager = minecraft.player.level().getRecipeManager();
+            List<RecipeHolder<?>> holders = manager.getRecipes().stream().filter(holder ->
+                minecraft.player.getRecipeBook().contains(holder)
+            ).toList();
+            List<String> allTypes = new ArrayList<>();
+//            List<RecipeCollection> allCollections = minecraft.player.level().getRecipeManager().getRecipes();
+//            allCollections.addAll(book.getCollections());
+            for (RecipeHolder<?> holder : holders) {
+                if (holder != null) {
+                    Recipe<?> recipe = holder.value();
+                    String type = BuiltInRegistries.RECIPE_TYPE.getKey(recipe.getType()).toString();
+                    if (!allTypes.contains(type)) {
+                        allTypes.add(type);
+                        minecraft.player.sendSystemMessage(Component.literal(type));
+                    }
+                }
+            }
+
             List<RecipeCollection> list = this.book.getCollection(this.selectedTab.getCategory());
             list.forEach(c -> c.canCraft(this.stackedContents, this.menu.getGridWidth(), this.menu.getGridHeight(), this.book));
             List<RecipeCollection> list1 = Lists.newArrayList(list);
@@ -287,15 +313,15 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
     public void initVisuals(CallbackInfo ci) {
         if (Config.INSTANCE.getModEnabled() && minecraft.player != null) {
             rbp$isGrouping=CommonClass.groupingState;
+            this.xOffset = this.widthTooNarrow ? 0 : 86;
+            int xo = (int) Math.round((this.width - 147) / 2.0) - this.xOffset;
+            int yo = (int) Math.round((this.height - 166) / 2.0);
             if (Config.INSTANCE.getUseCustomUI()) {
-                this.xOffset = this.widthTooNarrow ? 0 : 86;
-                int xo = (int) Math.round((this.width - 147) / 2.0) - this.xOffset;
-                int yo = (int) Math.round((this.height - 166) / 2.0);
                 this.stackedContents.clear();
                 this.minecraft.player.getInventory().fillStackedContents(this.stackedContents);
                 this.menu.fillCraftSlotsStackedContents(this.stackedContents);
                 String s = this.searchBox != null ? this.searchBox.getValue() : "";
-                this.searchBox = new EditBox(minecraft.font, xo + 27, yo + 17, 84, 10, Component.translatable("itemGroup.search"));
+                this.searchBox = new EditBox(minecraft.font, xo + 27, yo + 16, 84, 10, Component.translatable("itemGroup.search"));
                 this.searchBox.setMaxLength(50);
                 this.searchBox.setVisible(true);
                 this.searchBox.setTextColor(-3439300);
@@ -337,18 +363,23 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
                 this.updateCollections(false);
                 this.updateTabs();
                 ci.cancel();
-            } else {
-                this.xOffset = this.widthTooNarrow ? 0 : 86;
-                int i = (this.width - 147) / 2 - this.xOffset;
-                int j = (this.height - 166) / 2;
-                this.rbp$groupButton = new StateSwitchingButton(i + 11, j + 139, 26, 16, rbp$isGrouping);
+            }
+            else {
+                this.rbp$groupButton = new StateSwitchingButton(xo + 11, yo + 139, 26, 16, rbp$isGrouping);
                 this.rbp$groupButton.setTooltip(rbp$isGrouping?Tooltip.create(Component.translatable("recipebookplus.gui.grouping")):Tooltip.create(Component.translatable("recipebookplus.gui.not_grouping")));
                 this.rbp$groupButton.initTextureValues(GROUP_BUTTON);
 
                 if (Config.INSTANCE.getDisplayHelpButton()) {
-                    this.rbp$helpButton = new ImageButton(i + 110, j + 139, 26, 16, HELP_BUTTON, a -> rbp$helpButton());
+                    this.rbp$helpButton = new ImageButton(xo + 110, yo + 139, 26, 16, HELP_BUTTON, a -> rbp$helpButton());
                     this.rbp$helpButton.setTooltip(rbp$getHelpButtonTooltip());
                 }
+            }
+            if (Config.INSTANCE.getEnableRecipeBrowser()) {
+                if (Config.INSTANCE.getUseCustomUI()) {
+                    this.rbp$fullscreenButton = new ImageButton(xo + 119, yo + 4, 7, 18, CUSTOM_HELP_BUTTON, a -> rbp$helpButton());
+                    this.rbp$fullscreenButton.setTooltip(rbp$getHelpButtonTooltip());
+                }
+                else {}
             }
         }
     }
@@ -384,6 +415,7 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
             ci.cancel();
         }
     }
+
     @Inject(method="mouseClicked",at=@At(value = "INVOKE",target = "Lnet/minecraft/client/gui/components/EditBox;setFocused(Z)V"),cancellable = true)
     public void rbp$mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
         if (Config.INSTANCE.getModEnabled()) {
@@ -399,6 +431,7 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
             }
         }
     }
+
     @Inject(method="mouseClicked",at= @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/recipebook/RecipeBookPage;getLastClickedRecipe()Lnet/minecraft/world/item/crafting/RecipeHolder;"))
     public void rbp$mouseClickedUnfocusSearchbar(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
         if (Config.INSTANCE.getModEnabled()) {

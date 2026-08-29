@@ -28,6 +28,8 @@ public class FabricConfig implements IConfig {
     @Override public boolean getUseCustomUI() {return useCustomUI;}
     public static boolean displayHelpButton = true;
     @Override public boolean getDisplayHelpButton() {return displayHelpButton;}
+    public static boolean enableRecipeBrowser = true;
+    @Override public boolean getEnableRecipeBrowser() {return enableRecipeBrowser;}
 
     private static class Data {
         boolean modEnabled = true;
@@ -35,6 +37,7 @@ public class FabricConfig implements IConfig {
         String modidPrefix = "@";
         boolean useCustomUI = true;
         boolean displayHelpButton = true;
+        boolean enableRecipeBrowser = true;
     }
 
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -49,6 +52,7 @@ public class FabricConfig implements IConfig {
             data.modidPrefix = modidPrefix;
             data.useCustomUI = useCustomUI;
             data.displayHelpButton = displayHelpButton;
+            data.enableRecipeBrowser = enableRecipeBrowser;
             try (Writer writer = Files.newBufferedWriter(FILE)) {
                 GSON.toJson(data, writer);
             }
@@ -67,6 +71,7 @@ public class FabricConfig implements IConfig {
                 modidPrefix = data.modidPrefix;
                 useCustomUI = data.useCustomUI;
                 displayHelpButton = data.displayHelpButton;
+                enableRecipeBrowser = data.enableRecipeBrowser;
             }
         } catch (IOException e) {Constants.LOG.error(e.getMessage());}
     }

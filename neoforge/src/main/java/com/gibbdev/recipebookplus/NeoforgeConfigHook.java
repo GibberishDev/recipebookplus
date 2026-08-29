@@ -23,4 +23,8 @@ public class NeoforgeConfigHook implements IConfig {
     public boolean getDisplayHelpButton() {
         return NeoforgeConfig.DISPLAY_HELP_BUTTON.get();
     }
+    @Override
+    public boolean getEnableRecipeBrowser() {
+        return NeoforgeConfig.ENABLE_RECIPE_BROWSER.get();
+    }
 }

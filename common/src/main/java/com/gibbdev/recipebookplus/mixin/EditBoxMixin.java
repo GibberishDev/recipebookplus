@@ -20,7 +20,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import javax.annotation.Nullable;
 import java.util.function.BiFunction;
 
 @Mixin(EditBox.class)
@@ -51,11 +50,11 @@ public abstract class EditBoxMixin extends AbstractWidget implements Renderable,
     private int textColor;
     @Shadow
     private int textColorUneditable;
-    @Shadow @Nullable
+    @Shadow
     private String suggestion;
     @Shadow
     private BiFunction<String, Integer, FormattedCharSequence> formatter;
-    @Shadow @Nullable
+    @Shadow
     private Component hint;
     @Shadow
     private long focusedTime;

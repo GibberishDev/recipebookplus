@@ -26,6 +26,10 @@ public class NeoforgeConfig {
             .translation("recipebookplus.configuration.display_help")
             .comment("If \"ON\" then there will be help element on recipe book screen that will display controls and prefixes in a tooltip")
             .define("display_help_button", true);
+    public static final ModConfigSpec.BooleanValue ENABLE_RECIPE_BROWSER = BUILDER
+            .translation("recipebookplus.configuration.enable_recipe_browser")
+            .comment("If \"ON\" then there will be UI option to view all known recipes across different recipe types")
+            .define("display_help_button", true);
 
     static final ModConfigSpec SPEC = BUILDER.build();
 }

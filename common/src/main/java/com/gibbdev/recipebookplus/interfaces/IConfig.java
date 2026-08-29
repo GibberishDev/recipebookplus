@@ -6,4 +6,5 @@ public interface IConfig {
     String getModidPrefix();
     boolean getUseCustomUI();
     boolean getDisplayHelpButton();
+    boolean getEnableRecipeBrowser();
 }
