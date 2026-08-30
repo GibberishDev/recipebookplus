@@ -14,6 +14,7 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
 public class NeoforgeRecipeBookPlus {
     public NeoforgeRecipeBookPlus(IEventBus ignored, ModContainer modContainer) {
         modContainer.registerConfig(ModConfig.Type.CLIENT, NeoforgeConfig.SPEC);
+        modContainer.registerConfig(ModConfig.Type.SERVER, NeoforgeConfig.SERVER_SPEC);
         Config.INSTANCE = new NeoforgeConfigHook();
     }
 }

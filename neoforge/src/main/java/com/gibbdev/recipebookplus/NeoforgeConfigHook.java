@@ -27,4 +27,12 @@ public class NeoforgeConfigHook implements IConfig {
     public boolean getEnableRecipeBrowser() {
         return NeoforgeConfig.ENABLE_RECIPE_BROWSER.get();
     }
+    @Override
+    public boolean getRecipeDiscovery() {
+        return NeoforgeConfig.RECIPE_DISCOVERY.get();
+    }
+    @Override
+    public RECIPE_DISCOVERY_MODE_ENUM getRecipeDiscoveryMode() {
+        return NeoforgeConfig.RECIPE_DISCOVERY_MODE.get();
+    }
 }

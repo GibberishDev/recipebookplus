@@ -1,78 +1,113 @@
 package com.gibbdev.recipebookplus;
 
 import com.gibbdev.recipebookplus.interfaces.IConfig;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import net.fabricmc.loader.api.FabricLoader;
+import me.shedaniel.autoconfig.ConfigData;
+import me.shedaniel.autoconfig.annotation.Config;
+import me.shedaniel.autoconfig.annotation.ConfigEntry;
+import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
+import net.minecraft.network.chat.Component;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
-public class FabricConfig implements IConfig {
-    public static boolean modEnabled = true;
-    @Override public boolean getModEnabled() {
-        return modEnabled;
-    }
-    public static String ingredientPrefix = "$";
-    @Override public String getIngredientPrefix() {
-        return ingredientPrefix;
-    }
-    public static String modidPrefix = "@";
-    @Override public String getModidPrefix() {
-        return modidPrefix;
-    }
-    public static boolean useCustomUI = true;
-    @Override public boolean getUseCustomUI() {return useCustomUI;}
-    public static boolean displayHelpButton = true;
-    @Override public boolean getDisplayHelpButton() {return displayHelpButton;}
-    public static boolean enableRecipeBrowser = true;
-    @Override public boolean getEnableRecipeBrowser() {return enableRecipeBrowser;}
+@Config(name = Constants.MOD_ID)
+public class FabricConfig implements IConfig, ConfigData {
 
-    private static class Data {
-        boolean modEnabled = true;
-        String ingredientPrefix = "$";
-        String modidPrefix = "@";
-        boolean useCustomUI = true;
-        boolean displayHelpButton = true;
-        boolean enableRecipeBrowser = true;
+
+    //region client
+    @ConfigEntry.Category("Client")
+    @ConfigEntry.Gui.Tooltip()
+    private static boolean MOD_ENABLED = true;
+    @ConfigEntry.Category("Client")
+    @ConfigEntry.Gui.Tooltip()
+    private static String INGREDIENT_PREFIX = "$";
+    @ConfigEntry.Category("Client")
+    @ConfigEntry.Gui.Tooltip()
+    private static String MODID_PREFIX = "@";
+
+    //⠀⠀⠀⢀⣤⣴⣶⣶⣤⠀⠀⠀⢠⣤⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⠀⠀⠀⠀⣤⣤⣤⣤⣤⣤⣤⠀⠀⠀⢠⣤⠀⠀⠀⠀⠀⠀⣤⡄⠀⠀⣠⣤⣤⣤⣤⣤⣤⣤⣤⠀
+    //⠀⢀⣾⣿⠟⠋⠉⠉⠙⠁⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⢸⣿⡟⠛⠛⠛⠛⠛⠁⠀⠀⣿⣿⣿⠀⠀⠀⠀⠀⣿⣿⠀⠀⠙⠛⠛⠛⣿⣿⠛⠛⠛⠁
+    //⠀⣿⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⢸⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⢿⣿⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀
+    //⢰⣿⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⢸⣿⣇⣀⣀⣀⣀⣀⠀⠀⠀⣿⣿⠀⢿⣿⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀
+    //⢸⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⢸⣿⡿⠿⠿⠿⠿⠟⠀⠀⠀⣿⣿⠀⠀⢿⣿⠀⠀⣿⣿⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀
+    //⠘⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⢸⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⢿⣿⠀⣿⣿⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀
+    //⠀⢿⣿⣄⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⢸⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⢿⣿⣿⣿⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀
+    //⠀⠀⠻⣿⣷⣦⣤⣤⣴⡄⠀⠀⣿⣿⣷⣶⣶⣶⣶⣶⠀⠀⠀⣿⣿⠀⠀⠀⢸⣿⣷⣶⣶⣶⣶⣶⡄⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⣿⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀
+    //⠀⠀⠀⠀⠉⠙⠛⠛⠉⠀⠀⠀⠈⠉⠉⠉⠉⠉⠉⠉⠀⠀⠀⠈⠉⠀⠀⠀⠀⠉⠉⠉⠉⠉⠉⠉⠀⠀⠀⠈⠉⠀⠀⠀⠀⠀⠀⠉⠁⠀⠀⠀⠀⠀⠀⠉⠁⠀⠀⠀⠀
+
+
+
+    //endregion
+
+    //region server
+    //⠀⢀⣤⣶⣦⣤⣤⠀⠀⠀⠀⣤⣤⣤⣤⣤⣤⣤⠀⠀⠀⢠⣤⣤⣤⣤⣄⣀⠀⠀⠀⠀⣤⣄⠀⠀⠀⠀⠀⠀⢀⣤⠀⠀⠀⣤⣤⣤⣤⣤⣤⣤⠀⠀⠀⢠⣤⣤⣤⣤⣄⣀⠀⠀⠀
+    //⣰⣿⡟⠉⠉⠙⠻⠃⠀⠀⢸⣿⡟⠛⠛⠛⠛⠛⠁⠀⠀⣿⣿⠛⠛⠛⠛⢿⣿⣆⠀⠀⢿⣿⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⢸⣿⡟⠛⠛⠛⠛⠛⠁⠀⠀⣿⣿⠛⠛⠛⠛⢿⣿⣆⠀
+    //⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⠀⠀⠈⣿⣷⠀⠀⠀⠀⢰⣿⡏⠀⠀⢸⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⠀
+    //⠘⣿⣷⣄⠀⠀⠀⠀⠀⠀⢸⣿⣇⣀⣀⣀⣀⣀⠀⠀⠀⣿⣿⠀⠀⠀⠀⣠⣿⡟⠀⠀⠀⢻⣿⡄⠀⠀⠀⣿⣿⠀⠀⠀⢸⣿⣇⣀⣀⣀⣀⣀⠀⠀⠀⣿⣿⠀⠀⠀⠀⣠⣿⡟⠀
+    //⠀⠀⠛⠿⣿⣿⣦⠀⠀⠀⢸⣿⡿⠿⠿⠿⠿⠟⠀⠀⠀⣿⣿⣿⣿⣿⣿⡿⠋⠀⠀⠀⠀⠀⣿⣷⠀⠀⢰⣿⠃⠀⠀⠀⢸⣿⡿⠿⠿⠿⠿⠟⠀⠀⠀⣿⣿⣿⣿⣿⣿⡿⠋⠀⠀
+    //⠀⠀⠀⠀⠀⠙⣿⣿⠀⠀⢸⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠻⣿⡄⠀⠀⠀⠀⠀⠹⣿⡄⠀⣿⡿⠀⠀⠀⠀⢸⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠻⣿⡄⠀⠀
+    //⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⢸⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⢿⣿⠀⠀⠀⠀⠀⠀⣿⣿⢰⣿⠁⠀⠀⠀⠀⢸⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⢿⣿⠀⠀
+    //⢰⣷⣦⣤⣤⣾⣿⠟⠀⠀⢸⣿⣷⣶⣶⣶⣶⣶⡄⠀⠀⣿⣿⠀⠀⠀⠀⠈⣿⣷⠀⠀⠀⠀⠀⠘⣿⣿⡟⠀⠀⠀⠀⠀⢸⣿⣷⣶⣶⣶⣶⣶⡄⠀⠀⣿⣿⠀⠀⠀⠀⠈⣿⣷⠀
+    //⠀⠈⠉⠛⠛⠉⠀⠀⠀⠀⠀⠉⠉⠉⠉⠉⠉⠉⠀⠀⠀⠈⠉⠀⠀⠀⠀⠀⠈⠉⠀⠀⠀⠀⠀⠀⠉⠉⠀⠀⠀⠀⠀⠀⠀⠉⠉⠉⠉⠉⠉⠉⠀⠀⠀⠈⠉⠀⠀⠀⠀⠀⠈⠉⠀
+
+    @ConfigEntry.Category("Server")
+    @ConfigEntry.Gui.Tooltip()
+    private static boolean RECIPE_DISCOVERY = true;
+    @ConfigEntry.Category("Server")
+    @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+    @ConfigEntry.Gui.Tooltip(count = 6)
+    private static RECIPE_DISCOVERY_MODE_ENUM RECIPE_DISCOVERY_MODE = RECIPE_DISCOVERY_MODE_ENUM.INGREDIENT_AND_ITEM;
+
+    //endregion
+
+    //region common
+    //⠀⢀⣶⣶⣷⣶⣄⠀⠀⠀⢀⣴⣶⣷⣶⣤⠀⠀⠀⢰⣶⣆⠀⠀⠀⠀⢰⣶⡆⠀⠀⣶⣶⠀⠀⠀⠀⠀⣶⣶⠀⠀⠀⢀⣴⣶⣷⣶⣤⠀⠀⠀⣶⣶⠀⠀⠀⠀⣶⡆
+    //⢀⣿⡿⠁⠀⠙⣿⣇⠀⢠⣿⡿⠁⠀⠙⣿⣷⠀⠀⢸⣿⣿⠀⠀⠀⠀⣿⣿⡇⠀⠀⣿⣿⣇⠀⠀⠀⠀⣿⣿⠀⠀⢠⣿⡿⠁⠀⠙⣿⣷⠀⠀⣿⣿⣆⠀⠀⠀⣿⡇
+    //⢸⣿⡇⠀⠀⠀⣿⣿⠀⢸⣿⡇⠀⠀⠀⣿⣿⠀⠀⢸⣿⣿⡄⠀⠀⠀⣿⣿⡇⠀⠀⣿⣿⣿⠀⠀⠀⢸⣿⣿⠀⠀⢸⣿⡇⠀⠀⠀⣿⣿⠀⠀⣿⣿⣿⠀⠀⠀⣿⡇
+    //⢸⣿⡇⠀⠀⠀⠉⠉⠀⢸⣿⡇⠀⠀⠀⣿⣿⠀⠀⢸⣿⢹⣧⠀⠀⣸⡟⣿⡇⠀⠀⣿⣿⣿⡄⠀⠀⣿⠃⣿⠀⠀⢸⣿⡇⠀⠀⠀⣿⣿⠀⠀⣿⣿⢻⣿⠀⠀⣿⡇
+    //⢸⣿⡇⠀⠀⠀⠀⠀⠀⢸⣿⡇⠀⠀⠀⣿⣿⠀⠀⢸⣿⠈⣿⠀⠀⣿⠃⣿⣷⠀⠀⣿⡏⢹⣧⠀⢀⣿⠀⣿⡆⠀⢸⣿⡇⠀⠀⠀⣿⣿⠀⠀⣿⣿⠀⣿⣧⠀⣿⡇
+    //⢸⣿⡇⠀⠀⠀⣀⣀⠀⢸⣿⡇⠀⠀⠀⣿⣿⠀⠀⢸⣿⠀⣿⡆⢠⣿⠀⣿⣿⠀⠀⣿⡇⠀⣿⠀⣼⡏⠀⣿⡇⠀⢸⣿⡇⠀⠀⠀⣿⣿⠀⠀⣿⣿⠀⠈⣿⣄⣿⡇
+    //⢸⣿⡇⠀⠀⠀⣿⣿⠀⢸⣿⡇⠀⠀⠀⣿⣿⠀⠀⣾⣿⠀⢸⣷⣼⡇⠀⣿⣿⠀⠀⣿⡇⠀⣿⡆⣿⠀⠀⣿⡇⠀⢸⣿⡇⠀⠀⠀⣿⣿⠀⠀⣿⣿⠀⠀⢹⣿⣿⡇
+    //⠘⣿⣧⠀⠀⢀⣿⡏⠀⠘⣿⣧⠀⠀⢀⣿⣿⠀⠀⣿⣿⠀⠀⣿⣿⠀⠀⣿⣿⠀⠀⣿⡇⠀⠸⣿⣿⠀⠀⣿⡇⠀⠘⣿⣧⠀⠀⢀⣿⣿⠀⠀⣿⣿⠀⠀⠀⢿⣿⡇
+    //⠀⠙⢿⣿⣿⣿⠟⠀⠀⠀⠙⢿⣿⣿⣿⠿⠁⠀⠀⣿⣿⠀⠀⢻⡿⠀⠀⣿⣿⠀⠀⣿⡇⠀⠀⣿⠇⠀⠀⣿⡇⠀⠀⠙⢿⣿⣿⣿⠿⠁⠀⠀⣿⣿⠀⠀⠀⠈⣿⡇
+
+    @Override
+    public boolean getModEnabled() {
+        return false;
     }
 
-    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    public static final Path FILE = FabricLoader.getInstance().getConfigDir().resolve("recipebookplus.json");
+    @Override
+    public String getIngredientPrefix() {
+        return "";
+    }
 
-    public static void save() {
-        try {
-            Files.createDirectories(FILE.getParent());
-            Data data = new Data();
-            data.modEnabled = modEnabled;
-            data.ingredientPrefix = ingredientPrefix;
-            data.modidPrefix = modidPrefix;
-            data.useCustomUI = useCustomUI;
-            data.displayHelpButton = displayHelpButton;
-            data.enableRecipeBrowser = enableRecipeBrowser;
-            try (Writer writer = Files.newBufferedWriter(FILE)) {
-                GSON.toJson(data, writer);
-            }
-        } catch (IOException e) {Constants.LOG.error(e.getMessage());}
+    @Override
+    public String getModidPrefix() {
+        return "";
     }
-    public static void load() {
-        if (!Files.exists(FILE)) {
-            save();
-            return;
-        }
-        try (Reader reader = Files.newBufferedReader(FILE)) {
-            Data data = GSON.fromJson(reader, Data.class);
-            if (data != null) {
-                modEnabled = data.modEnabled;
-                ingredientPrefix = data.ingredientPrefix;
-                modidPrefix = data.modidPrefix;
-                useCustomUI = data.useCustomUI;
-                displayHelpButton = data.displayHelpButton;
-                enableRecipeBrowser = data.enableRecipeBrowser;
-            }
-        } catch (IOException e) {Constants.LOG.error(e.getMessage());}
+
+    @Override
+    public boolean getUseCustomUI() {
+        return false;
     }
+
+    @Override
+    public boolean getDisplayHelpButton() {
+        return false;
+    }
+
+    @Override
+    public boolean getEnableRecipeBrowser() {
+        return false;
+    }
+
+    @Override
+    public boolean getRecipeDiscovery() {
+        return false;
+    }
+
+    @Override
+    public RECIPE_DISCOVERY_MODE_ENUM getRecipeDiscoveryMode() {
+        return null;
+    }
+
+    //endregion
 }

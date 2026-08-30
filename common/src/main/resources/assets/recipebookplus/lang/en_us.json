@@ -20,5 +20,18 @@
   "recipebookplus.configuration.use_custom_ui": "Use custom ui [TESTING]",
   "recipebookplus.configuration.use_custom_ui.tooltip": "Determines which recipe book UI to use. If \"ON\" then new custom ui is used. Otherwise modified vanilla one will be rendered",
   "recipebookplus.configuration.display_help": "Display help widget",
-  "recipebookplus.configuration.display_help.tooltip": "If \"ON\" then there will be help element on recipe book screen that will display controls and prefixes in a tooltip"
+  "recipebookplus.configuration.display_help.tooltip": "If \"ON\" then there will be help element on recipe book screen that will display controls and prefixes in a tooltip",
+  "recipebookplus.configuration.recipe_discovery": "Recipe Discovery",
+  "recipebookplus.configuration.recipe_discovery_mode": "Discovery Mode",
+  "recipebookplus.configuration.recipe_discovery_mode.description": "test",
+
+  "text.autoconfig.recipebookplus.option.MOD_ENABLED": "Mod enabled",
+  "text.autoconfig.recipebookplus.option.MOD_ENABLED.@Tooltip": "Determines if mod is enabled\n  If \"OFF\" reverts the recipe book to vanilla behavior",
+  "text.autoconfig.recipebookplus.option.RECIPE_DISCOVERY_MODE.@Tooltip[0]":"Defines recipe discovery mode:",
+  "text.autoconfig.recipebookplus.option.RECIPE_DISCOVERY_MODE.@Tooltip[1]":"§6INGREDIENT_AND_ITEM§r: discover recipe from inventory change - any ingredient or item itself §a[DEFAULT]§r",
+  "text.autoconfig.recipebookplus.option.RECIPE_DISCOVERY_MODE.@Tooltip[2]":"§6ITEM§r: discover recipe from inventory change - item itself",
+  "text.autoconfig.recipebookplus.option.RECIPE_DISCOVERY_MODE.@Tooltip[3]":"§6INGREDIENT§r: discover recipe from inventory change - any ingredient",
+  "text.autoconfig.recipebookplus.option.RECIPE_DISCOVERY_MODE.@Tooltip[4]":"§6ADVANCEMENT§r: discover recipe from advancement trigger - same way vanilla treats recipe discovery",
+  "text.autoconfig.recipebookplus.option.RECIPE_DISCOVERY_MODE.@Tooltip[5]":"§6NONE§r: do not discover recipes - can only be awarded with §7/rbp give recipe <target?> <id>§r§8"
+
 }

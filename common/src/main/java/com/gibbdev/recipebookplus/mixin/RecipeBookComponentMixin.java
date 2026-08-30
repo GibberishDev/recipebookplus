@@ -145,23 +145,25 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
     @Inject(method = "updateCollections", at=@At("HEAD"), cancellable = true)
     private void rbp$updateCollections(boolean resetPage, CallbackInfo ci) {
         if (Config.INSTANCE.getModEnabled()) {
-            RecipeManager manager = minecraft.player.level().getRecipeManager();
-            List<RecipeHolder<?>> holders = manager.getRecipes().stream().filter(holder ->
-                minecraft.player.getRecipeBook().contains(holder)
-            ).toList();
-            List<String> allTypes = new ArrayList<>();
+            minecraft.player.sendSystemMessage(Component.literal(Config.INSTANCE.getRecipeDiscoveryMode().toString()));
+//            RecipeManager manager = minecraft.player.level().getRecipeManager();
+//            List<RecipeHolder<?>> holders = manager.getRecipes().stream().filter(holder ->
+//                minecraft.player.getRecipeBook().contains(holder)
+//            ).toList();
+//            List<String> allTypes = new ArrayList<>();
 //            List<RecipeCollection> allCollections = minecraft.player.level().getRecipeManager().getRecipes();
 //            allCollections.addAll(book.getCollections());
-            for (RecipeHolder<?> holder : holders) {
-                if (holder != null) {
-                    Recipe<?> recipe = holder.value();
-                    String type = BuiltInRegistries.RECIPE_TYPE.getKey(recipe.getType()).toString();
-                    if (!allTypes.contains(type)) {
-                        allTypes.add(type);
-                        minecraft.player.sendSystemMessage(Component.literal(type));
-                    }
-                }
-            }
+
+//            for (RecipeHolder<?> holder : holders) {
+//                if (holder != null) {
+//                    Recipe<?> recipe = holder.value();
+//                    String type = BuiltInRegistries.RECIPE_TYPE.getKey(recipe.getType()).toString();
+//                    if (!allTypes.contains(type)) {
+//                        allTypes.add(type);
+//                        minecraft.player.sendSystemMessage(Component.literal(type));
+//                    }
+//                }
+//            }
 
             List<RecipeCollection> list = this.book.getCollection(this.selectedTab.getCategory());
             list.forEach(c -> c.canCraft(this.stackedContents, this.menu.getGridWidth(), this.menu.getGridHeight(), this.book));

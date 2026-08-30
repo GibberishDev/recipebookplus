@@ -1,6 +1,10 @@
 package com.gibbdev.recipebookplus;
 
+import com.gibbdev.recipebookplus.interfaces.IConfig.RECIPE_DISCOVERY_MODE_ENUM;
+import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.common.ModConfigSpec;
+
+import java.awt.*;
 
 public class NeoforgeConfig {
 
@@ -32,4 +36,24 @@ public class NeoforgeConfig {
             .define("display_help_button", true);
 
     static final ModConfigSpec SPEC = BUILDER.build();
+
+    private static final ModConfigSpec.Builder SERVER_BUILDER = new ModConfigSpec.Builder();
+
+
+    public static final ModConfigSpec.BooleanValue RECIPE_DISCOVERY = SERVER_BUILDER
+            .translation("recipebookplus.configuration.recipe_discovery")
+            .comment("If \"ON\" then recipes will only be shown if player has discovered them. Server authoritative setting. can ve change on client if server does not have mod installed")
+            .define("recipe_discovery", true);
+    public static final ModConfigSpec.EnumValue<RECIPE_DISCOVERY_MODE_ENUM> RECIPE_DISCOVERY_MODE = SERVER_BUILDER
+            .translation("recipebookplus.configuration.recipe_discovery_mode")
+            .comment("Defines recipe discovery mode:",
+                    "§6INGREDIENT_AND_ITEM§r:\ndiscover recipe from inventory change - any ingredient or item itself [DEFAULT]",
+                    "§6ITEM§r:\ndiscover recipe from inventory change - item itself",
+                    "§6INGREDIENT§r:\ndiscover recipe from inventory change - any ingredient",
+                    "§6ADVANCEMENT§r:\ndiscover recipe from advancement trigger - same way vanilla treats recipe discovery",
+                    "§6NONE§r:\ndo not discover recipes - can only be awarded with §u/rbp give recipe <target?> <id>§r§8"
+            )
+            .defineEnum("recipe_discovery_mode", RECIPE_DISCOVERY_MODE_ENUM.INGREDIENT_AND_ITEM);
+
+    static final ModConfigSpec SERVER_SPEC = SERVER_BUILDER.build();
 }
