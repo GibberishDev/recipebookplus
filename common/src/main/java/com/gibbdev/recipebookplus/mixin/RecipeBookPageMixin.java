@@ -56,7 +56,7 @@ public class RecipeBookPageMixin {
     );
     @Inject(method = "init", at = @At("HEAD"), cancellable = true)
     public void rbp$init(Minecraft minecraft, int x, int y, CallbackInfo ci) {
-        if (Config.INSTANCE.getModEnabled() && Config.INSTANCE.getUseCustomUI() && minecraft.player != null) {
+        if (Config.getModEnabled() && Config.getUseCustomUI() && minecraft.player != null) {
             this.minecraft = minecraft;
             this.recipeBook = minecraft.player.getRecipeBook();
             for (int i = 0; i < this.buttons.size(); ++i) {
@@ -73,7 +73,7 @@ public class RecipeBookPageMixin {
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void rbp$render(GuiGraphics guiGraphics, int x, int y, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
-        if (Config.INSTANCE.getModEnabled() && Config.INSTANCE.getUseCustomUI()) {
+        if (Config.getModEnabled() && Config.getUseCustomUI()) {
             if (this.totalPages > 1) {
                 Component component = Component.translatable("gui.recipebook.page", this.currentPage + 1, this.totalPages);
                 int i = this.minecraft.font.width(component);

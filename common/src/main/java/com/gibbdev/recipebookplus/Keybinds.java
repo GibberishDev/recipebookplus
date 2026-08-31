@@ -39,7 +39,7 @@ public class Keybinds {
         if (
             screen instanceof RecipeUpdateListener &&
             Minecraft.getInstance().player != null &&
-            Config.INSTANCE.getModEnabled()
+            Config.getModEnabled()
         ) {
             if (!RECIPE_KEYBIND.matches(keyCode, scanCode) && !USAGE_KEYBIND.matches(keyCode, scanCode) && !MOD_KEYBIND.matches(keyCode, scanCode)) return;
             RecipeBookComponent rbc = ((RecipeUpdateListener) screen).getRecipeBookComponent();
@@ -59,13 +59,13 @@ public class Keybinds {
             } else
             if (USAGE_KEYBIND.matches(keyCode, scanCode)) {
                 if ((keyModifiers & GLFW.GLFW_MOD_CONTROL) != 0) {
-                    ((IRecipeBookComponent) rbc).rbp$search(Config.INSTANCE.getIngredientPrefix()+BuiltInRegistries.ITEM.getKey(hoveredItem.getItem()));
+                    ((IRecipeBookComponent) rbc).rbp$search(Config.getIngredientPrefix()+BuiltInRegistries.ITEM.getKey(hoveredItem.getItem()));
                 } else {
-                    ((IRecipeBookComponent) rbc).rbp$search(Config.INSTANCE.getIngredientPrefix()+Component.translatable(hoveredItem.getDescriptionId()).getString());
+                    ((IRecipeBookComponent) rbc).rbp$search(Config.getIngredientPrefix()+Component.translatable(hoveredItem.getDescriptionId()).getString());
                 }
             } else
             if (MOD_KEYBIND.matches(keyCode, scanCode)) {
-                ((IRecipeBookComponent) rbc).rbp$search(Config.INSTANCE.getModidPrefix()+BuiltInRegistries.ITEM.getKey(hoveredItem.getItem()).getNamespace());
+                ((IRecipeBookComponent) rbc).rbp$search(Config.getModidPrefix()+BuiltInRegistries.ITEM.getKey(hoveredItem.getItem()).getNamespace());
             }
 //            ((IRecipeBookComponent) rbc).rbp$search(Component.translatable(.getDescriptionId()).getString());
         }

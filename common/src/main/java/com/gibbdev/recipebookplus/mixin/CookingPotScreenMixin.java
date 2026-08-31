@@ -55,7 +55,7 @@ public abstract class CookingPotScreenMixin extends AbstractContainerScreen<Cook
 
     @Inject(method = "init", at = @At("HEAD"), cancellable = true)
     public void rbp$init(CallbackInfo ci) {
-        if (Config.INSTANCE.getModEnabled() && Config.INSTANCE.getUseCustomUI() && this.minecraft !=null) {
+        if (Config.getModEnabled() && Config.getUseCustomUI() && this.minecraft !=null) {
             super.init();
             this.widthTooNarrow = this.width < 379;
             this.titleLabelX = 28;
@@ -78,7 +78,7 @@ public abstract class CookingPotScreenMixin extends AbstractContainerScreen<Cook
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void rbp$render(GuiGraphics gui, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
-        if (Config.INSTANCE.getModEnabled() && Config.INSTANCE.getUseCustomUI()) {
+        if (Config.getModEnabled() && Config.getUseCustomUI()) {
             if (this.recipeBookComponent.isVisible() && this.widthTooNarrow) {
                 this.renderBackground(gui, mouseX, mouseY, partialTicks);
                 this.recipeBookComponent.render(gui, mouseX, mouseY, partialTicks);
@@ -97,7 +97,7 @@ public abstract class CookingPotScreenMixin extends AbstractContainerScreen<Cook
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
     public void mouseClicked(double mouseX, double mouseY, int buttonId, CallbackInfoReturnable<Boolean> cir) {
-        if (Config.INSTANCE.getModEnabled() && Config.INSTANCE.getUseCustomUI()) {
+        if (Config.getModEnabled() && Config.getUseCustomUI()) {
             if (this.recipeBookComponent.mouseClicked(mouseX, mouseY, buttonId)) {
                 this.setFocused(this.recipeBookComponent);
                 cir.setReturnValue(true);

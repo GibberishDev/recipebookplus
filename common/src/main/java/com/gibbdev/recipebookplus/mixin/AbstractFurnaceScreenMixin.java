@@ -42,7 +42,7 @@ public abstract class AbstractFurnaceScreenMixin<T extends AbstractFurnaceMenu> 
 
     @Inject(method = "init", at=@At("HEAD"),cancellable = true)
     public void rbp$init(CallbackInfo ci) {
-        if (Config.INSTANCE.getModEnabled() && Config.INSTANCE.getUseCustomUI() && this.minecraft != null) {
+        if (Config.getModEnabled() && Config.getUseCustomUI() && this.minecraft != null) {
             super.init();
             this.widthTooNarrow = this.width < 379;
             this.recipeBookComponent.init(this.width, this.height, this.minecraft, this.widthTooNarrow, this.menu);
@@ -57,7 +57,7 @@ public abstract class AbstractFurnaceScreenMixin<T extends AbstractFurnaceMenu> 
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void rbp$render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
-        if (Config.INSTANCE.getModEnabled() && Config.INSTANCE.getUseCustomUI()) {
+        if (Config.getModEnabled() && Config.getUseCustomUI()) {
             if (this.recipeBookComponent.isVisible() && this.widthTooNarrow) {
                 this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
                 this.recipeBookComponent.render(guiGraphics, mouseX, mouseY, partialTick);
@@ -75,7 +75,7 @@ public abstract class AbstractFurnaceScreenMixin<T extends AbstractFurnaceMenu> 
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
     public void rbp$mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
-        if (Config.INSTANCE.getModEnabled() && Config.INSTANCE.getUseCustomUI()) {
+        if (Config.getModEnabled() && Config.getUseCustomUI()) {
             if (this.recipeBookComponent.mouseClicked(mouseX, mouseY, button)) {
                 cir.setReturnValue(true);
             } else if (this.rbp$toggleRecipeBookButton.mouseClicked(mouseX, mouseY, button)) {

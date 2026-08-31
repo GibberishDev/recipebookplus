@@ -53,7 +53,7 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
 
     @Inject(method = "init", at = @At("HEAD"), cancellable = true)
     protected void rbp$init(CallbackInfo ci) {
-        if (Config.INSTANCE.getModEnabled() && Config.INSTANCE.getUseCustomUI() && this.minecraft != null && this.minecraft.gameMode != null && this.minecraft.player != null) {
+        if (Config.getModEnabled() && Config.getUseCustomUI() && this.minecraft != null && this.minecraft.gameMode != null && this.minecraft.player != null) {
             if (this.minecraft.gameMode.hasInfiniteItems()) {
                 this.minecraft.setScreen(new CreativeModeInventoryScreen(this.minecraft.player, this.minecraft.player.connection.enabledFeatures(), this.minecraft.options.operatorItemsTab().get()));
             } else {
@@ -73,7 +73,7 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void rbp$render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
-        if (Config.INSTANCE.getModEnabled() && Config.INSTANCE.getUseCustomUI()) {
+        if (Config.getModEnabled() && Config.getUseCustomUI()) {
             if (this.recipeBookComponent.isVisible() && this.widthTooNarrow) {
                 this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
                 this.recipeBookComponent.render(guiGraphics, mouseX, mouseY, partialTick);
@@ -93,7 +93,7 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
     public void rbp$mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
-        if (Config.INSTANCE.getModEnabled() && Config.INSTANCE.getUseCustomUI()) {
+        if (Config.getModEnabled() && Config.getUseCustomUI()) {
             if (this.recipeBookComponent.mouseClicked(mouseX, mouseY, button)) {
                 this.setFocused(this.recipeBookComponent);
                 cir.setReturnValue(true);

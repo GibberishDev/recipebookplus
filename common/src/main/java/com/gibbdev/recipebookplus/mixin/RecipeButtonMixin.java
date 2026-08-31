@@ -59,7 +59,7 @@ public abstract class RecipeButtonMixin extends AbstractWidget {
 
     @Inject(method = "renderWidget", at = @At("HEAD"),cancellable = true)
     public void rbp$renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
-        if (Config.INSTANCE.getModEnabled() && Config.INSTANCE.getUseCustomUI()) {
+        if (Config.getModEnabled() && Config.getUseCustomUI()) {
             if (!Screen.hasControlDown()) {
                 this.time += partialTick;
             }

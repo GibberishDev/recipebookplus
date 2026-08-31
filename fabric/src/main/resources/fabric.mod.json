@@ -23,8 +23,8 @@
         "main": [
             "com.gibbdev.recipebookplus.RecipeBook"
         ],
-        "modmenu": [
-            "com.gibbdev.recipebookplus.ModMenuIntegration"
+        "client": [
+            "com.gibbdev.recipebookplus.RecipeBookPlusClient"
         ]
     },
     "mixins": [

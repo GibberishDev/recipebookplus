@@ -57,7 +57,7 @@ public abstract class RecipeBookButtonMixin extends StateSwitchingButton impleme
 
     @Inject(method = "renderWidget", at = @At("HEAD"), cancellable = true)
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
-        if (Config.INSTANCE.getModEnabled() && Config.INSTANCE.getUseCustomUI()) {
+        if (Config.getModEnabled() && Config.getUseCustomUI()) {
             if (this.animationTime > 0.0F) {
                 float f = 1.0F + 0.1F * (float) Math.sin(this.animationTime / 15.0F * (float) Math.PI);
                 guiGraphics.pose().pushPose();
