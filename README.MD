@@ -28,7 +28,8 @@
   <ul><li> Allow user to bookmark any recipe to find it easier next time. Add a little star in the corner or golden frame idk. Maybe make favorites recipes appear in front of the book on the first page instead of alphabetic sort</li>
   <li>Favorites tab. Or shove them into separate tab. xd</li></ul></li>
 <li>Fullscreen recipe book
-  <ul><li> Allow user to open book in fullscreen to view recipes not for current workstation akin JEI. No need to place down a furnace to see what smelting recipes user has</li></ul></li>
+  <ul><li> Allow user to open book in fullscreen to view recipes not for current workstation akin JEI. No need to place down a furnace to see what smelting recipes user has</li>
+<li>Allow viewing all discovered recipes. Alongside it I want to make more perfomant customizable recipe discovery system.</ul></li>
 <li>Support other types of stations
   <ul><li> Allow new recipe book locations. Some of those may include: Brewing stand, Smithing Table or some Modded screens that require additional compatibility</li></ul></li>
 <li>Support other versions and modloaders
