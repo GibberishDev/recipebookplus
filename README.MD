@@ -29,7 +29,7 @@
   <li>Favorites tab. Or shove them into separate tab. xd</li></ul></li>
 <li>Fullscreen recipe book
   <ul><li> Allow user to open book in fullscreen to view recipes not for current workstation akin JEI. No need to place down a furnace to see what smelting recipes user has</li>
-<li>Allow viewing all discovered recipes. Alongside it I want to make more perfomant customizable recipe discovery system.</ul></li>
+<li>Allow viewing all discovered recipes. Alongside it I want to make more perfomant customizable recipe discovery system. For example discover recipes from items acquired in inventory (only as ingredient, only item itself, both or leave it advancement only aka vanilla style)</ul></li>
 <li>Support other types of stations
   <ul><li> Allow new recipe book locations. Some of those may include: Brewing stand, Smithing Table or some Modded screens that require additional compatibility</li></ul></li>
 <li>Support other versions and modloaders
