@@ -18,13 +18,16 @@
     },
     "license": "${license}",
     "icon": "${mod_id}.png",
-    "environment": "client",
+    "environment": "*",
     "entrypoints": {
         "main": [
-            "com.gibbdev.recipebookplus.RecipeBook"
+          "com.gibbdev.recipebookplus.FabricRecipeBook"
         ],
         "client": [
-            "com.gibbdev.recipebookplus.RecipeBookPlusClient"
+            "com.gibbdev.recipebookplus.FabricRecipeBookPlusClient"
+        ],
+        "server": [
+            "com.gibbdev.recipebookplus.FabricRecipeBookServer"
         ]
     },
     "mixins": [
@@ -35,7 +38,8 @@
         "fabricloader": ">=${fabric_loader_version}",
         "fabric-api": "*",
         "minecraft": "${minecraft_version}",
-        "java": ">=${java_version}"
+        "java": ">=${java_version}",
+        "forgeconfigapiport": ">=21.1.6"
     },
     "suggests": {
         "another-mod": "*"

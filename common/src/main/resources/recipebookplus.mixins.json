@@ -5,18 +5,23 @@
   "plugin": "com.gibbdev.recipebookplus.ConditionalMixinPlugin",
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_18",
-  "mixins": [],
+  "mixins": [
+    "ServerPlaceRecipeMixin"
+  ],
   "client": [
     "AbstractContainerScreenMixin",
     "AbstractFurnaceScreenMixin",
+    "ClientPacketListenerMixin",
     "CookingPotScreenMixin",
     "CraftingScreenMixin",
     "EditBoxMixin",
+    "GhostRecipeMixin",
     "InventoryScreenMixin",
-    "RecipeBookButtonMixin",
     "RecipeBookComponentMixin",
     "RecipeBookPageMixin",
-    "RecipeButtonMixin"
+    "RecipeBookTabButtonMixin",
+    "RecipeButtonMixin",
+    "StateSwitchingButtonMixin"
   ],
   "server": [],
   "injectors": {

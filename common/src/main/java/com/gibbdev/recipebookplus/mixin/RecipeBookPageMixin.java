@@ -2,6 +2,7 @@ package com.gibbdev.recipebookplus.mixin;
 
 import com.gibbdev.recipebookplus.Config;
 import com.gibbdev.recipebookplus.Constants;
+import com.gibbdev.recipebookplus.interfaces.accessors.IStateSwitchingButtonAccessor;
 import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -12,6 +13,7 @@ import net.minecraft.client.gui.screens.recipebook.RecipeBookPage;
 import net.minecraft.client.gui.screens.recipebook.RecipeButton;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.RecipeBook;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.List;
 
 @Mixin(RecipeBookPage.class)
-public class RecipeBookPageMixin {
+public abstract class RecipeBookPageMixin {
 
     @Shadow
     private Minecraft minecraft;
@@ -44,6 +46,7 @@ public class RecipeBookPageMixin {
     private RecipeButton hoveredButton;
     @Shadow @Final
     private OverlayRecipeComponent overlay;
+
     @Unique
     private static final WidgetSprites CUSTOM_PAGE_FORWARD_SPRITES = new WidgetSprites(
             ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID,"custom_recipe_book/page_forward"),
@@ -67,6 +70,10 @@ public class RecipeBookPageMixin {
             this.forwardButton.initTextureValues(CUSTOM_PAGE_FORWARD_SPRITES);
             this.backButton = new StateSwitchingButton(x + 38, y + 144, 12, 8, true);
             this.backButton.initTextureValues(CUSTOM_PAGE_BACKWARD_SPRITES);
+
+            ((IStateSwitchingButtonAccessor) this.forwardButton).rbp$setClickSound(SoundEvents.BOOK_PAGE_TURN);
+            ((IStateSwitchingButtonAccessor) this.backButton).rbp$setClickSound(SoundEvents.BOOK_PAGE_TURN);
+
             ci.cancel();
         }
     }
@@ -74,6 +81,7 @@ public class RecipeBookPageMixin {
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void rbp$render(GuiGraphics guiGraphics, int x, int y, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         if (Config.getModEnabled() && Config.getUseCustomUI()) {
+
             if (this.totalPages > 1) {
                 Component component = Component.translatable("gui.recipebook.page", this.currentPage + 1, this.totalPages);
                 int i = this.minecraft.font.width(component);

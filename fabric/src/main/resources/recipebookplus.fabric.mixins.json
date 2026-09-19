@@ -8,7 +8,9 @@
   "client": [
     "ScreenMixin"
   ],
-  "server": [],
+  "server": [
+    "ItemEntityMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

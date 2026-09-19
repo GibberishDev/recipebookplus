@@ -1,5 +1,10 @@
 package com.gibbdev.recipebookplus;
 
+import com.electronwill.nightconfig.core.ConfigSpec;
+import com.gibbdev.recipebookplus.networking.ModStatus;
+import com.gibbdev.recipebookplus.platform.Services;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class Config {
@@ -22,10 +27,13 @@ public class Config {
         public static final ModConfigSpec.BooleanValue USE_CUSTOM_UI;
         public static final ModConfigSpec.BooleanValue DISPLAY_HELP_BUTTON;
         public static final ModConfigSpec.BooleanValue ENABLE_RECIPE_BROWSER;
+        public static final ModConfigSpec.BooleanValue RECIPE_DISCOVERY;
+        public static final ModConfigSpec.EnumValue<RECIPE_DISCOVERY_MODE_ENUM> RECIPE_DISCOVERY_MODE;
 
         static {
             ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
             {
+                builder.push("general");
                 MOD_ENABLED = builder
                         .translation("recipebookplus.configuration.mod_enabled")
                         .comment("Determines if mod is enabled","If \"OFF\" reverts the recipe book to vanilla behavior")
@@ -50,6 +58,25 @@ public class Config {
                         .translation("recipebookplus.configuration.enable_recipe_browser")
                         .comment("If \"ON\" then there will be UI option to view all known recipes across different recipe types")
                         .define("display_help_button", true);
+
+                builder.pop();
+                builder.push("server_authoritative").comment("These values will be overridden in case of mod being installed server side");
+
+                RECIPE_DISCOVERY = builder
+                        .translation("recipebookplus.configuration.recipe_discovery")
+                        .comment("If \"ON\" then recipes will only be shown if player has discovered them. Server authoritative setting. can ve change on client if server does not have mod installed")
+                        .define("recipe_discovery_client", true);
+                RECIPE_DISCOVERY_MODE = builder
+                        .translation("recipebookplus.configuration.recipe_discovery_mode")
+                        .comment("Defines recipe discovery mode:",
+                                "§6INGREDIENT_AND_ITEM§r:\ndiscover recipe from inventory change - any ingredient or item itself [DEFAULT]",
+                                "§6ITEM§r:\ndiscover recipe from inventory change - item itself",
+                                "§6INGREDIENT§r:\ndiscover recipe from inventory change - any ingredient",
+                                "§6ADVANCEMENT§r:\ndiscover recipe from advancement trigger - same way vanilla treats recipe discovery",
+                                "§6NONE§r:\ndo not discover recipes - can only be awarded with §u/rbprecipe give <target> <id>§r§8"
+                        )
+                        .defineEnum("recipe_discovery_mode_client", RECIPE_DISCOVERY_MODE_ENUM.ADVANCEMENT);
+                builder.pop();
             }
             SPEC = builder.build();
         }
@@ -76,21 +103,57 @@ public class Config {
                             "§6ITEM§r:\ndiscover recipe from inventory change - item itself",
                             "§6INGREDIENT§r:\ndiscover recipe from inventory change - any ingredient",
                             "§6ADVANCEMENT§r:\ndiscover recipe from advancement trigger - same way vanilla treats recipe discovery",
-                            "§6NONE§r:\ndo not discover recipes - can only be awarded with §u/rbp give recipe <target?> <id>§r§8"
+                            "§6NONE§r:\ndo not discover recipes - can only be awarded with §u/rbprecipe give <target> <id>§r§8"
                     )
-                    .defineEnum("recipe_discovery_mode", RECIPE_DISCOVERY_MODE_ENUM.INGREDIENT_AND_ITEM);
+                    .defineEnum("recipe_discovery_mode", RECIPE_DISCOVERY_MODE_ENUM.ADVANCEMENT);
             SPEC = builder.build();
         }
 
     }
 
-    public static boolean getModEnabled() {return Client.MOD_ENABLED.get();}
-    public static String getIngredientPrefix() {return Client.INGREDIENT_PREFIX.get();}
-    public static String getModidPrefix() {return Client.MODID_PREFIX.get();}
-    public static boolean getUseCustomUI() {return Client.USE_CUSTOM_UI.get();}
-    public static boolean getDisplayHelpButton() {return Client.DISPLAY_HELP_BUTTON.get();}
-    public static boolean getEnableRecipeBrowser() {return Client.ENABLE_RECIPE_BROWSER.get();}
+    //#region Getters
+    public static boolean getModEnabled() {
+        return Client.MOD_ENABLED.get();
+    }
 
-    public static boolean getRecipeDiscovery() {return Server.RECIPE_DISCOVERY.get();}
-    public static RECIPE_DISCOVERY_MODE_ENUM getRecipeDiscoveryMode() {return Server.RECIPE_DISCOVERY_MODE.get();}
+    public static String  getIngredientPrefix() {
+        return Client.INGREDIENT_PREFIX.get();
+    }
+
+    public static String  getModidPrefix() {
+        return Client.MODID_PREFIX.get();
+    }
+
+    public static boolean getUseCustomUI() {
+        return Client.USE_CUSTOM_UI.get();
+    }
+
+    public static boolean getDisplayHelpButton() {
+        return Client.DISPLAY_HELP_BUTTON.get();
+    }
+
+    public static boolean getEnableRecipeBrowser() {
+        return Client.ENABLE_RECIPE_BROWSER.get();
+    }
+
+
+    public static boolean getRecipeDiscovery() {
+        if (Minecraft.getInstance().isSingleplayer()) return Client.RECIPE_DISCOVERY.get();
+        if (ModStatus.getInstalled()) {
+            return Server.RECIPE_DISCOVERY.get();
+        } else {
+            return Client.RECIPE_DISCOVERY.get();
+        }
+    }
+
+    public static RECIPE_DISCOVERY_MODE_ENUM getRecipeDiscoveryMode() {
+        if (Minecraft.getInstance().isSingleplayer()) return Client.RECIPE_DISCOVERY_MODE.get();
+        if (ModStatus.getInstalled()) {
+            return Server.RECIPE_DISCOVERY_MODE.get();
+        } else {
+            return Client.RECIPE_DISCOVERY_MODE.get();
+        }
+    }
+    //#endregion
+
 }

@@ -1,5 +1,6 @@
 package com.gibbdev.recipebookplus;
 
+import com.gibbdev.recipebookplus.platform.Services;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -21,7 +22,7 @@ public class ConditionalMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        if (mixinClassName.equals("CookingPotScreenMixin")) return isModLoaded("farmersdelight");
+        if (mixinClassName.equals("CookingPotScreenMixin")) return Services.PLATFORM.isModLoaded("farmersdelight");
         return true;
     }
 
@@ -43,24 +44,6 @@ public class ConditionalMixinPlugin implements IMixinConfigPlugin {
     @Override
     public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
 
-    }
-
-    private boolean isModLoaded(String id) {
-        try {
-            Class<?> FabricLoader = Class.forName("net.fabricmc.loader.api.FabricLoader");
-            Object instance = FabricLoader.getMethod("getInstance").invoke(null);
-            Method isModLoaded = FabricLoader.getMethod("isModLoaded", String.class);
-            return (boolean) isModLoaded.invoke(instance, id);
-        } catch (Throwable ignored) {}
-        try {
-            Class<?> LoadingModList = Class.forName("net.neoforged.fml.loading.LoadingModList");
-            Object instance = LoadingModList.getMethod("get").invoke(null);
-            if (instance != null) {
-                Method getModFileById = LoadingModList.getMethod("getModFileById", String.class);
-                return getModFileById.invoke(instance, id) != null;
-            }
-        } catch (Throwable ignored) {}
-        return false;
     }
 
 }

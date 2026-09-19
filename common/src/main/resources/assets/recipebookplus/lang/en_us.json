@@ -32,6 +32,12 @@
   "text.autoconfig.recipebookplus.option.RECIPE_DISCOVERY_MODE.@Tooltip[2]":"§6ITEM§r: discover recipe from inventory change - item itself",
   "text.autoconfig.recipebookplus.option.RECIPE_DISCOVERY_MODE.@Tooltip[3]":"§6INGREDIENT§r: discover recipe from inventory change - any ingredient",
   "text.autoconfig.recipebookplus.option.RECIPE_DISCOVERY_MODE.@Tooltip[4]":"§6ADVANCEMENT§r: discover recipe from advancement trigger - same way vanilla treats recipe discovery",
-  "text.autoconfig.recipebookplus.option.RECIPE_DISCOVERY_MODE.@Tooltip[5]":"§6NONE§r: do not discover recipes - can only be awarded with §7/rbp give recipe <target?> <id>§r§8"
+  "text.autoconfig.recipebookplus.option.RECIPE_DISCOVERY_MODE.@Tooltip[5]":"§6NONE§r: do not discover recipes - can only be awarded with §7/rbp give recipe <target?> <id>§r§8",
+  "command.feedback.success.grant_one_recipe": "Successfuly added recipe for %s to %s",
+  "command.feedback.success.take_one_recipe": "Successfuly taken recipe for %s from %s",
+  "command.feedback.success.grant_many_recipes": "Added %s recipes to %s",
+  "command.feedback.success.take_many_recipes": "Taken %s recipes from %s",
+  "command.feedback.fail.grant_one_recipe": "%s didn't learn any new recipes",
+  "command.feedback.fail.take_one_recipe": "%s didn't forget any recipes"
 
 }

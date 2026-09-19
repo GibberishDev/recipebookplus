@@ -1,5 +1,11 @@
 package com.gibbdev.recipebookplus.platform.services;
 
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+
+import java.nio.file.Path;
+
 public interface IPlatformHelper {
 
     /**
@@ -33,4 +39,12 @@ public interface IPlatformHelper {
 
         return isDevelopmentEnvironment() ? "development" : "production";
     }
+
+    void getServerModVersion();
+
+    String getModVersion();
+
+    Path getInstanceDirectory();
+
+    void sendPayloadToClient(ServerPlayer player, CustomPacketPayload payload);
 }

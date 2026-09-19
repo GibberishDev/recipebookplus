@@ -2,6 +2,7 @@ package com.gibbdev.recipebookplus;
 
 import com.gibbdev.recipebookplus.interfaces.IAbstractContainerScreen;
 import com.gibbdev.recipebookplus.interfaces.IRecipeBookComponent;
+import com.gibbdev.recipebookplus.interfaces.accessors.IAbstractContainerScreenAccessor;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -12,6 +13,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
+
+import java.awt.*;
 
 public class Keybinds {
     public static final String CATEGORY = "key.category.recipebookplus.category";
@@ -43,13 +46,15 @@ public class Keybinds {
         ) {
             if (!RECIPE_KEYBIND.matches(keyCode, scanCode) && !USAGE_KEYBIND.matches(keyCode, scanCode) && !MOD_KEYBIND.matches(keyCode, scanCode)) return;
             RecipeBookComponent rbc = ((RecipeUpdateListener) screen).getRecipeBookComponent();
-//            if (!rbc.isVisible()) {
-//                rbc.toggleVisibility();
-//                TODO: write a method to toggle screens. rn it is divided between 3 classes: AbstractFurnaceScreen, CraftingScreen, InventoryScreen
-//            }
+            if (!rbc.isVisible()) {
+                if (screen instanceof IAbstractContainerScreenAccessor) ((IAbstractContainerScreenAccessor) screen).rbp$toggleRecipeBook();
+            }
             if (!rbc.isVisible()) return; //unaccounted screens. prob from other mods not yet supported
-            if (((IAbstractContainerScreen) screen).rbp$getSlotUnderCursor()==null || !((IAbstractContainerScreen) screen).rbp$getSlotUnderCursor().hasItem()) return;
-            ItemStack hoveredItem = ((IAbstractContainerScreen) screen).rbp$getSlotUnderCursor().getItem();
+            ItemStack hoveredItem = null;
+            if (((IAbstractContainerScreen) screen).rbp$getSlotUnderCursor()!=null && ((IAbstractContainerScreen) screen).rbp$getSlotUnderCursor().hasItem()) hoveredItem = ((IAbstractContainerScreen) screen).rbp$getSlotUnderCursor().getItem();
+            if (((IRecipeBookComponent) rbc).rbp$getGhostItemStack(((IAbstractContainerScreen) screen).rbp$getMousePos().x, ((IAbstractContainerScreen) screen).rbp$getMousePos().y) != null) hoveredItem = ((IRecipeBookComponent) rbc).rbp$getGhostItemStack(((IAbstractContainerScreen) screen).rbp$getMousePos().x, ((IAbstractContainerScreen) screen).rbp$getMousePos().y);
+            if (hoveredItem == null) return;
+
             if (RECIPE_KEYBIND.matches(keyCode, scanCode)) {
                 if ((keyModifiers & GLFW.GLFW_MOD_CONTROL) != 0) {
                     ((IRecipeBookComponent) rbc).rbp$search(BuiltInRegistries.ITEM.getKey(hoveredItem.getItem()).toString());
