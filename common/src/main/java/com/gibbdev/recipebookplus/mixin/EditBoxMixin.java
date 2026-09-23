@@ -72,7 +72,7 @@ public abstract class EditBoxMixin extends AbstractWidget implements Renderable,
 
 
     @Override @Unique
-    public void rbp$renderWidgetButWithoutFknShadow(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void recipebookplus$renderWidgetButWithoutFknShadow(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (this.isVisible()) {
             if (this.isBordered()) {
                 ResourceLocation resourcelocation = SPRITES.get(this.isActive(), this.isFocused());

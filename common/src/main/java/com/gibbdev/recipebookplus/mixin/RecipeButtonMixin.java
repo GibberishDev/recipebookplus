@@ -2,7 +2,7 @@ package com.gibbdev.recipebookplus.mixin;
 
 import com.gibbdev.recipebookplus.Config;
 import com.gibbdev.recipebookplus.Constants;
-import net.minecraft.client.Minecraft;
+import com.gibbdev.recipebookplus.interfaces.accessors.IRecipeButtonAccessor;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -26,12 +26,11 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
 @Mixin(RecipeButton.class)
-public abstract class RecipeButtonMixin extends AbstractWidget {
+public abstract class RecipeButtonMixin extends AbstractWidget implements IRecipeButtonAccessor {
     public RecipeButtonMixin(int x, int y, int width, int height, Component message) {super(x, y, width, height, message);}
     @Shadow @Override public abstract void renderWidget(@NotNull GuiGraphics guiGraphics, int i, int i1, float v);
     @Shadow @Override public abstract void updateWidgetNarration(@NotNull NarrationElementOutput narrationElementOutput);
@@ -63,7 +62,7 @@ public abstract class RecipeButtonMixin extends AbstractWidget {
     protected abstract List<RecipeHolder<?>> getOrderedRecipes();
 
     @Inject(method = "renderWidget", at = @At("HEAD"),cancellable = true)
-    public void rbp$renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
+    public void recipebookplus$renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         if (Config.getModEnabled() && Config.getUseCustomUI()) {
             if (!Screen.hasControlDown()) {
                 this.time += partialTick;
@@ -113,8 +112,17 @@ public abstract class RecipeButtonMixin extends AbstractWidget {
 
 
     @Override
-    public void playDownSound(SoundManager handler) {
+    public void playDownSound(@NotNull SoundManager handler) {
         if (Config.getUseCustomUI() && Config.getModEnabled()) handler.play(SimpleSoundInstance.forUI(SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 1.0F));
         else handler.play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
+
+    @Unique
+    @Override
+    public ItemStack recipebookplus$getRecipeButtonDisplayItemStack() {
+        List<RecipeHolder<?>> list = this.getOrderedRecipes();
+        this.currentIndex = Mth.floor(this.time / 30.0F) % list.size();
+        return list.get(this.currentIndex).value().getResultItem(this.collection.registryAccess());
+    }
+
 }

@@ -47,32 +47,35 @@ public class Keybinds {
             if (!RECIPE_KEYBIND.matches(keyCode, scanCode) && !USAGE_KEYBIND.matches(keyCode, scanCode) && !MOD_KEYBIND.matches(keyCode, scanCode)) return;
             RecipeBookComponent rbc = ((RecipeUpdateListener) screen).getRecipeBookComponent();
             if (!rbc.isVisible()) {
-                if (screen instanceof IAbstractContainerScreenAccessor) ((IAbstractContainerScreenAccessor) screen).rbp$toggleRecipeBook();
+                if (screen instanceof IAbstractContainerScreenAccessor) ((IAbstractContainerScreenAccessor) screen).recipebookplus$toggleRecipeBook();
             }
             if (!rbc.isVisible()) return; //unaccounted screens. prob from other mods not yet supported
             ItemStack hoveredItem = null;
-            if (((IAbstractContainerScreen) screen).rbp$getSlotUnderCursor()!=null && ((IAbstractContainerScreen) screen).rbp$getSlotUnderCursor().hasItem()) hoveredItem = ((IAbstractContainerScreen) screen).rbp$getSlotUnderCursor().getItem();
-            if (((IRecipeBookComponent) rbc).rbp$getGhostItemStack(((IAbstractContainerScreen) screen).rbp$getMousePos().x, ((IAbstractContainerScreen) screen).rbp$getMousePos().y) != null) hoveredItem = ((IRecipeBookComponent) rbc).rbp$getGhostItemStack(((IAbstractContainerScreen) screen).rbp$getMousePos().x, ((IAbstractContainerScreen) screen).rbp$getMousePos().y);
+            if (((IAbstractContainerScreen) screen).recipebookplus$getSlotUnderCursor()!=null && ((IAbstractContainerScreen) screen).recipebookplus$getSlotUnderCursor().hasItem()) hoveredItem = ((IAbstractContainerScreen) screen).recipebookplus$getSlotUnderCursor().getItem();
+            int xPos = ((IAbstractContainerScreen) screen).recipebookplus$getMousePos().x;
+            int yPos = ((IAbstractContainerScreen) screen).recipebookplus$getMousePos().y;
+            if (((IRecipeBookComponent) rbc).recipebookplus$getGhostItemStack(xPos, yPos) != null) hoveredItem = ((IRecipeBookComponent) rbc).recipebookplus$getGhostItemStack(xPos, yPos);
+            if (((IRecipeBookComponent) rbc).recipebookplus$getRecipeButtonDisplayItemStack(xPos,yPos) != null) hoveredItem = ((IRecipeBookComponent) rbc).recipebookplus$getRecipeButtonDisplayItemStack(xPos,yPos);
             if (hoveredItem == null) return;
 
             if (RECIPE_KEYBIND.matches(keyCode, scanCode)) {
                 if ((keyModifiers & GLFW.GLFW_MOD_CONTROL) != 0) {
-                    ((IRecipeBookComponent) rbc).rbp$search(BuiltInRegistries.ITEM.getKey(hoveredItem.getItem()).toString());
+                    ((IRecipeBookComponent) rbc).recipebookplus$search(BuiltInRegistries.ITEM.getKey(hoveredItem.getItem()).toString());
                 } else {
-                    ((IRecipeBookComponent) rbc).rbp$search(Component.translatable(hoveredItem.getDescriptionId()).getString());
+                    ((IRecipeBookComponent) rbc).recipebookplus$search(Component.translatable(hoveredItem.getDescriptionId()).getString());
                 }
             } else
             if (USAGE_KEYBIND.matches(keyCode, scanCode)) {
                 if ((keyModifiers & GLFW.GLFW_MOD_CONTROL) != 0) {
-                    ((IRecipeBookComponent) rbc).rbp$search(Config.getIngredientPrefix()+BuiltInRegistries.ITEM.getKey(hoveredItem.getItem()));
+                    ((IRecipeBookComponent) rbc).recipebookplus$search(Config.getIngredientPrefix()+BuiltInRegistries.ITEM.getKey(hoveredItem.getItem()));
                 } else {
-                    ((IRecipeBookComponent) rbc).rbp$search(Config.getIngredientPrefix()+Component.translatable(hoveredItem.getDescriptionId()).getString());
+                    ((IRecipeBookComponent) rbc).recipebookplus$search(Config.getIngredientPrefix()+Component.translatable(hoveredItem.getDescriptionId()).getString());
                 }
             } else
             if (MOD_KEYBIND.matches(keyCode, scanCode)) {
-                ((IRecipeBookComponent) rbc).rbp$search(Config.getModidPrefix()+BuiltInRegistries.ITEM.getKey(hoveredItem.getItem()).getNamespace());
+                ((IRecipeBookComponent) rbc).recipebookplus$search(Config.getModidPrefix()+BuiltInRegistries.ITEM.getKey(hoveredItem.getItem()).getNamespace());
             }
-//            ((IRecipeBookComponent) rbc).rbp$search(Component.translatable(.getDescriptionId()).getString());
+//            ((IRecipeBookComponent) rbc).recipebookplus$search(Component.translatable(.getDescriptionId()).getString());
         }
     }
 }

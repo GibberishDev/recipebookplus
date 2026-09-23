@@ -8,6 +8,8 @@ import com.gibbdev.recipebookplus.interfaces.IEditBox;
 import com.gibbdev.recipebookplus.interfaces.IRecipeBookButton;
 import com.gibbdev.recipebookplus.interfaces.IRecipeBookComponent;
 import com.gibbdev.recipebookplus.interfaces.accessors.IGhostRecipeAccessor;
+import com.gibbdev.recipebookplus.interfaces.accessors.IRecipeBookAccessor;
+import com.gibbdev.recipebookplus.interfaces.accessors.IRecipeBookPageAccessor;
 import com.gibbdev.recipebookplus.interfaces.accessors.IStateSwitchingButtonAccessor;
 import com.gibbdev.recipebookplus.recipediscovery.RecipeDiscovery;
 import com.gibbdev.recipebookplus.platform.Services;
@@ -110,7 +112,9 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
     private static final ResourceLocation BACKGROUND_IMAGE_LOCATION =
             ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID,"textures/gui/sprites/custom_recipe_book/background.png");
     @Unique
-    private boolean rbp$isGrouping = true;
+    private static final Set<RecipeBookCategories> recipebookplus$visibleCategories = new HashSet<>();
+    @Unique
+    private boolean recipebookplus$isGrouping = true;
 
     @Unique
     private static final WidgetSprites HELP_BUTTON = new WidgetSprites(
@@ -145,24 +149,21 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
             ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID,"custom_recipe_book/hover_widget_help"));
 
     @Unique
-    private StateSwitchingButton rbp$groupButton;
+    private StateSwitchingButton recipebookplus$groupButton;
     @Unique
-    private ImageButton rbp$helpButton;
+    private ImageButton recipebookplus$helpButton;
     @Unique
-    private ImageButton rbp$fullscreenButton;
+    private ImageButton recipebookplus$fullscreenButton;
 
     // endregion
 
     // region search
     @Inject(method = "updateCollections", at=@At("HEAD"), cancellable = true)
-    private void rbp$updateCollections(boolean resetPage, CallbackInfo ci) {
+    private void recipebookplus$updateCollections(boolean resetPage, CallbackInfo ci) {
         if (Config.getModEnabled()) {
-            Services.PLATFORM.getServerModVersion();
-            RecipeDiscovery.giveRecipe("minecraft:stonecutter",minecraft.player.getUUID());
-//            Minecraft.getInstance().player.sendSystemMessage(Component.literal(Boolean.toString(Config.Server.SPEC.isLoaded())));
-            List<RecipeCollection> list = rbp$getCollections();
+            List<RecipeCollection> list = recipebookplus$getCollections();
             String s = this.searchBox.getValue();
-            list = rbp$searchCollectionList(list, s);
+            list = recipebookplus$searchCollectionList(list, s);
 
             if (this.book.isFiltering(this.menu)) {
                 list.removeIf(c -> !c.hasCraftable());
@@ -174,13 +175,13 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
 
 
     @Unique
-    private List<RecipeCollection> rbp$searchCollectionList(List<RecipeCollection> list, String searchTerm) {
+    private List<RecipeCollection> recipebookplus$searchCollectionList(List<RecipeCollection> list, String searchTerm) {
         if (minecraft.level == null) return list;
         searchTerm = searchTerm.toLowerCase(Locale.ROOT);
         RegistryAccess ra = minecraft.level.registryAccess();
         List<RecipeCollection> tempList = Lists.newArrayList(list);
-        rbp$isGrouping = RecipeBookPlus.groupingState;
-        if (!rbp$isGrouping) {
+        recipebookplus$isGrouping = RecipeBookPlus.groupingState;
+        if (!recipebookplus$isGrouping) {
             for (RecipeCollection collection : tempList ) {
                 if (collection.getRecipes().size() > 1) {
 
@@ -202,7 +203,7 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
 
         if (searchTerm.startsWith(Config.getIngredientPrefix()) && !searchTerm.equals(Config.getIngredientPrefix())) {
             searchTerm = searchTerm.replaceFirst(Matcher.quoteReplacement(Config.getIngredientPrefix()), "").strip();
-            List<ItemStack> searchItems = rbp$getSearchItems(searchTerm);
+            List<ItemStack> searchItems = recipebookplus$getSearchItems(searchTerm);
             if (searchItems.isEmpty()) return new ArrayList<>();
             tempList = Lists.newArrayList(list);
             for (RecipeCollection collection : tempList ) {
@@ -246,7 +247,7 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
                 list.remove(collection);
             }
         } else {
-            String namespace = rbp$getNamespace(searchTerm);
+            String namespace = recipebookplus$getNamespace(searchTerm);
             String s = searchTerm;
             tempList = Lists.newArrayList(list);
             for (RecipeCollection collection : tempList ) {
@@ -274,15 +275,15 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
     }
 
     @Unique
-    private List<ItemStack> rbp$getSearchItems(String searchTerm) {
-        if (rbp$getNamespace(searchTerm).isEmpty())
+    private List<ItemStack> recipebookplus$getSearchItems(String searchTerm) {
+        if (recipebookplus$getNamespace(searchTerm).isEmpty())
         { return BuiltInRegistries.ITEM.stream().filter(item -> new ItemStack(item).getDisplayName().getString().toLowerCase(Locale.ROOT).contains(searchTerm)).map(ItemStack::new).toList(); }
         else
         { return BuiltInRegistries.ITEM.stream().filter(item -> BuiltInRegistries.ITEM.getKey(item).toString().toLowerCase(Locale.ROOT).equals(searchTerm)).map(ItemStack::new).toList(); }
     }
 
     @Unique
-    private static String rbp$getNamespace(String searchTerm) {
+    private static String recipebookplus$getNamespace(String searchTerm) {
         if (searchTerm.indexOf(":", searchTerm.indexOf(":")+1) != -1 || !searchTerm.contains(":")) return "";
         String testStr = searchTerm.split(":")[0];
         Set<String> namespaces = BuiltInRegistries.ITEM.keySet().stream().map(ResourceLocation::getNamespace).collect(Collectors.toSet());
@@ -291,7 +292,7 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
     }
 
     @Override
-    public void rbp$search(String searchTerm) {
+    public void recipebookplus$search(String searchTerm) {
         searchBox.setFocused(false);
         searchBox.setValue(searchTerm);
         searchBox.moveCursorToStart(false);
@@ -300,47 +301,58 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
     }
 
     @Unique
-    private List<RecipeCollection> rbp$getCollections() {
+    private List<RecipeCollection> recipebookplus$getCollections() {
         List<RecipeCollection> list = new ArrayList<>();
-
+        if (minecraft.player == null || minecraft.level == null) return list;
         RecipeBookCategories category = this.selectedTab.getCategory();
         if (this.book.getCollection(this.selectedTab.getCategory()).getFirst() == null) return list;
         RecipeType<?> recipeType = this.book.getCollection(this.selectedTab.getCategory()).getFirst().getRecipes().getFirst().value().getType();
         RegistryAccess ra = minecraft.level.registryAccess();
 
-        if (!Config.getRecipeDiscovery()) {
-            Map<String, List<RecipeHolder<?>>> holderGroups = new HashMap<>();
-            for (RecipeHolder<?> holder : minecraft.player.level().getRecipeManager().getRecipes()) {
-                if (holder.value().getType() != recipeType) continue;
-                if (category != rpb$getRecipeCategory(holder)  && !category.name().endsWith("SEARCH")) continue;
-                String group = holder.value().getGroup();
-                if (group.isEmpty()) {
-                    holderGroups.put(holder.value().toString(), List.of(holder));
-                } else {
-                    List<RecipeHolder<?>> currentList = new ArrayList<>();
-                    if (holderGroups.get(group) != null) {
-                        currentList.addAll(holderGroups.get(group));
-                    }
-                    currentList.add(holder);
-                    holderGroups.put(group,currentList);
-                }
+        Map<String, List<RecipeHolder<?>>> holderGroups = new HashMap<>();
+        Collection<RecipeHolder<?>> rawHolderList = new ArrayList<>();
+
+        if (Config.getRecipeDiscovery()) {
+            if (Config.getRecipeDiscoveryAdvancement()) {
+                Collection<RecipeHolder<?>> advancementHolders = new ArrayList<>();
+                minecraft.player.getRecipeBook().getCollections().forEach(collection -> {
+                    if (collection.hasKnownRecipes()) advancementHolders.addAll(collection.getRecipes());
+                });
+                rawHolderList.addAll(advancementHolders);
             }
-            holderGroups.forEach((group, holders) -> {
-                RecipeCollection newCollection = new RecipeCollection(ra, holders);
-                for (RecipeHolder<?> holder : holders) this.book.add(holder);
-                list.add(newCollection);
-            });
-            list.forEach(c -> c.canCraft(this.stackedContents, this.menu.getGridWidth(), this.menu.getGridHeight(), this.book));
+            if (Config.getRecipeDiscoveryIngredient() || Config.getRecipeDiscoveryItem()) rawHolderList.addAll(RecipeDiscovery.getKnownHolders(minecraft.player.getUUID()));
         } else {
-            list.addAll(this.book.getCollection(this.selectedTab.getCategory()));
-            list.forEach(c -> c.canCraft(this.stackedContents, this.menu.getGridWidth(), this.menu.getGridHeight(), this.book));
-            list.removeIf(c -> !c.hasKnownRecipes());
+            rawHolderList = minecraft.player.level().getRecipeManager().getRecipes();
         }
+        recipebookplus$updateVisibleCategories(rawHolderList.stream().toList());
+        for (RecipeHolder<?> holder : rawHolderList) {
+            if (holder.value().getType() != recipeType) continue;
+            if (category != rpb$getRecipeCategory(holder) && !category.name().endsWith("SEARCH")) continue;
+            String group = holder.value().getGroup();
+            if (group.isEmpty()) {
+                holderGroups.put(holder.value().toString(), List.of(holder));
+            } else {
+                List<RecipeHolder<?>> currentList = new ArrayList<>();
+                if (holderGroups.get(group) != null) {
+                    currentList.addAll(holderGroups.get(group));
+                }
+                currentList.add(holder);
+                holderGroups.put(group,currentList);
+            }
+        }
+        ((IRecipeBookAccessor) this.book).recipebookplus$clear();
+        holderGroups.forEach((group, holders) -> {
+            RecipeCollection newCollection = new RecipeCollection(ra, holders);
+            for (RecipeHolder<?> holder : holders) this.book.add(holder);
+            list.add(newCollection);
+        });
+        list.forEach(c -> c.canCraft(this.stackedContents, this.menu.getGridWidth(), this.menu.getGridHeight(), this.book));
         list.removeIf(c -> !c.hasFitting());
         return list;
     }
 
-    @Unique RecipeBookCategories rpb$getRecipeCategory(RecipeHolder<?> holder) {
+    @Unique
+    private static RecipeBookCategories rpb$getRecipeCategory(RecipeHolder<?> holder) {
         Recipe<?> recipe = holder.value();
         if (recipe instanceof CraftingRecipe) {
             CraftingRecipe craftingrecipe = (CraftingRecipe)recipe;
@@ -409,7 +421,7 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
     @Inject(method = "initVisuals", at = @At("HEAD"),cancellable = true)
     public void initVisuals(CallbackInfo ci) {
         if (Config.getModEnabled() && minecraft.player != null) {
-            rbp$isGrouping= RecipeBookPlus.groupingState;
+            recipebookplus$isGrouping= RecipeBookPlus.groupingState;
             this.xOffset = this.widthTooNarrow ? 0 : 86;
             int xo = (int) Math.round((this.width - 147) / 2.0) - this.xOffset;
             int yo = (int) Math.round((this.height - 166) / 2.0);
@@ -432,16 +444,16 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
                 this.filterButton = new StateSwitchingButton(xo + 135, yo + 4, 7, 18, this.book.isFiltering(this.menu));
                 this.filterButton.setTooltip(this.filterButton.isStateTriggered() ? Tooltip.create(ONLY_CRAFTABLES_TOOLTIP) : Tooltip.create(ALL_RECIPES_TOOLTIP));
                 this.filterButton.initTextureValues(CUSTOM_FILTER_BUTTON);
-                ((IStateSwitchingButtonAccessor) this.filterButton).rbp$setClickSound(SoundEvents.WOOL_PLACE, SoundEvents.WOOL_BREAK);
+                ((IStateSwitchingButtonAccessor) this.filterButton).recipebookplus$setClickSound(SoundEvents.WOOL_PLACE, SoundEvents.WOOL_BREAK);
 
-                this.rbp$groupButton = new StateSwitchingButton(xo + 127, yo + 4, 7, 18, rbp$isGrouping);
-                this.rbp$groupButton.setTooltip(rbp$isGrouping?Tooltip.create(Component.translatable("recipebookplus.gui.grouping")):Tooltip.create(Component.translatable("recipebookplus.gui.not_grouping")));
-                this.rbp$groupButton.initTextureValues(CUSTOM_GROUP_BUTTON);
-                ((IStateSwitchingButtonAccessor) this.rbp$groupButton).rbp$setClickSound(SoundEvents.WOOL_PLACE, SoundEvents.WOOL_BREAK);
+                this.recipebookplus$groupButton = new StateSwitchingButton(xo + 127, yo + 4, 7, 18, recipebookplus$isGrouping);
+                this.recipebookplus$groupButton.setTooltip(recipebookplus$isGrouping?Tooltip.create(Component.translatable("recipebookplus.gui.grouping")):Tooltip.create(Component.translatable("recipebookplus.gui.not_grouping")));
+                this.recipebookplus$groupButton.initTextureValues(CUSTOM_GROUP_BUTTON);
+                ((IStateSwitchingButtonAccessor) this.recipebookplus$groupButton).recipebookplus$setClickSound(SoundEvents.WOOL_PLACE, SoundEvents.WOOL_BREAK);
 
                 if (Config.getDisplayHelpButton()) {
-                    this.rbp$helpButton = new ImageButton(xo + 119, yo + 4, 7, 18, CUSTOM_HELP_BUTTON, button -> {});
-                    this.rbp$helpButton.setTooltip(rbp$getHelpButtonTooltip());
+                    this.recipebookplus$helpButton = new ImageButton(xo + 119, yo + 4, 7, 18, CUSTOM_HELP_BUTTON, button -> {});
+                    this.recipebookplus$helpButton.setTooltip(recipebookplus$getHelpButtonTooltip());
                 }
 
                 this.tabButtons.clear();
@@ -464,27 +476,27 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
                 ci.cancel();
             }
             else {
-                this.rbp$groupButton = new StateSwitchingButton(xo + 11, yo + 139, 26, 16, rbp$isGrouping);
-                this.rbp$groupButton.setTooltip(rbp$isGrouping?Tooltip.create(Component.translatable("recipebookplus.gui.grouping")):Tooltip.create(Component.translatable("recipebookplus.gui.not_grouping")));
-                this.rbp$groupButton.initTextureValues(GROUP_BUTTON);
+                this.recipebookplus$groupButton = new StateSwitchingButton(xo + 11, yo + 139, 26, 16, recipebookplus$isGrouping);
+                this.recipebookplus$groupButton.setTooltip(recipebookplus$isGrouping?Tooltip.create(Component.translatable("recipebookplus.gui.grouping")):Tooltip.create(Component.translatable("recipebookplus.gui.not_grouping")));
+                this.recipebookplus$groupButton.initTextureValues(GROUP_BUTTON);
 
                 if (Config.getDisplayHelpButton()) {
-                    this.rbp$helpButton = new ImageButton(xo + 110, yo + 139, 26, 16, HELP_BUTTON, button -> {});
-                    this.rbp$helpButton.setTooltip(rbp$getHelpButtonTooltip());
+                    this.recipebookplus$helpButton = new ImageButton(xo + 110, yo + 139, 26, 16, HELP_BUTTON, button -> {});
+                    this.recipebookplus$helpButton.setTooltip(recipebookplus$getHelpButtonTooltip());
                 }
             }
-            if (Config.getEnableRecipeBrowser()) {
-                if (Config.getUseCustomUI()) {
-                    this.rbp$fullscreenButton = new ImageButton(xo + 119, yo + 4, 7, 18, CUSTOM_HELP_BUTTON, button -> {});
-                    this.rbp$fullscreenButton.setTooltip(rbp$getHelpButtonTooltip());
-                }
-                else {}
-            }
+//            if (Config.getEnableRecipeBrowser()) {
+//                if (Config.getUseCustomUI()) {
+//                    this.recipebookplus$fullscreenButton = new ImageButton(xo + 119, yo + 4, 7, 18, CUSTOM_HELP_BUTTON, button -> {});
+//                    this.recipebookplus$fullscreenButton.setTooltip(recipebookplus$getHelpButtonTooltip());
+//                }
+//                else {}
+//            }
         }
     }
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    public void rbp$render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
+    public void recipebookplus$render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         if (Config.getModEnabled()) {
             if (this.isVisible()) {
                 guiGraphics.pose().pushPose();
@@ -496,13 +508,13 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
                 }else {
                     guiGraphics.blit(RECIPE_BOOK_LOCATION, i, j, 1, 1, 147, 166);
                 }
-                ((IEditBox) this.searchBox).rbp$renderWidgetButWithoutFknShadow(guiGraphics, mouseX, mouseY, partialTick);
+                ((IEditBox) this.searchBox).recipebookplus$renderWidgetButWithoutFknShadow(guiGraphics, mouseX, mouseY, partialTick);
 
                 for(RecipeBookTabButton recipebooktabbutton : this.tabButtons) {
                     recipebooktabbutton.render(guiGraphics, mouseX, mouseY, partialTick);
                 }
-                if (Config.getDisplayHelpButton()) this.rbp$helpButton.render(guiGraphics, mouseX, mouseY, partialTick);
-                this.rbp$groupButton.render(guiGraphics,mouseX,mouseY,partialTick);
+                if (Config.getDisplayHelpButton()) this.recipebookplus$helpButton.render(guiGraphics, mouseX, mouseY, partialTick);
+                this.recipebookplus$groupButton.render(guiGraphics,mouseX,mouseY,partialTick);
 
 
                 this.filterButton.render(guiGraphics, mouseX, mouseY, partialTick);
@@ -512,39 +524,46 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
             ci.cancel();
         }
     }
+
+    @Unique
+    private static void recipebookplus$updateVisibleCategories(List<RecipeHolder<?>> holders) {
+        recipebookplus$visibleCategories.clear();
+        recipebookplus$visibleCategories.addAll(holders.stream().map(RecipeBookComponentMixin::rpb$getRecipeCategory).collect(Collectors.toSet()));
+    }
+
     //MARK: Mouse Clicked
     @Inject(method="mouseClicked",at=@At("HEAD"),cancellable = true)
-    public void rbp$mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
+    public void recipebookplus$mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
         if (Config.getModEnabled()) {
 
             if (this.isVisible() && !this.minecraft.player.isSpectator()) {
 
 
-                ItemStack ghostItem = ((IGhostRecipeAccessor)this.ghostRecipe).getGhostItem(mouseX, mouseY);
+                ItemStack ghostItem = ((IGhostRecipeAccessor)this.ghostRecipe).recipebookplus$getGhostItem(mouseX, mouseY);
                 if (ghostItem != null && minecraft.player.containerMenu.getCarried().getItem() == Items.AIR) {
                     boolean ctrl = Screen.hasControlDown();
                     this.recipeBookPage.setInvisible();
                     switch (button) {
                         case 0: {
                             if (ctrl) {
-                                rbp$search(BuiltInRegistries.ITEM.getKey(ghostItem.getItem()).toString());
+                                recipebookplus$search(BuiltInRegistries.ITEM.getKey(ghostItem.getItem()).toString());
                             } else {
-                                rbp$search(Component.translatable(ghostItem.getDescriptionId()).getString());
+                                recipebookplus$search(Component.translatable(ghostItem.getDescriptionId()).getString());
                             }
                             cir.setReturnValue(true);
                             break;
                         }
                         case 1: {
                             if (ctrl) {
-                                rbp$search(Config.getIngredientPrefix()+BuiltInRegistries.ITEM.getKey(ghostItem.getItem()));
+                                recipebookplus$search(Config.getIngredientPrefix()+BuiltInRegistries.ITEM.getKey(ghostItem.getItem()));
                             } else {
-                                rbp$search(Config.getIngredientPrefix()+Component.translatable(ghostItem.getDescriptionId()).getString());
+                                recipebookplus$search(Config.getIngredientPrefix()+Component.translatable(ghostItem.getDescriptionId()).getString());
                             }
                             cir.setReturnValue(true);
                             break;
                         }
                         case 2: {
-                            rbp$search(Config.getModidPrefix()+BuiltInRegistries.ITEM.getKey(ghostItem.getItem()).getNamespace());
+                            recipebookplus$search(Config.getModidPrefix()+BuiltInRegistries.ITEM.getKey(ghostItem.getItem()).getNamespace());
                             cir.setReturnValue(true);
                             break;
                         }
@@ -555,9 +574,6 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
                     RecipeHolder<?> recipeholder = this.recipeBookPage.getLastClickedRecipe();
                     RecipeCollection recipecollection = this.recipeBookPage.getLastClickedRecipeCollection();
                     if (recipeholder != null && recipecollection != null) {
-                        if ((!recipecollection.isCraftable(recipeholder)) && this.ghostRecipe.getRecipe() == recipeholder) {
-                            cir.setReturnValue(false);
-                        }
                         this.ghostRecipe.clear();
                         this.minecraft.gameMode.handlePlaceRecipe(this.minecraft.player.containerMenu.containerId, recipeholder, Screen.hasShiftDown());
                         if (!this.isOffsetNextToMainGUI()) {
@@ -571,14 +587,14 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
                     cir.setReturnValue(true);
                 } else {
                     this.searchBox.setFocused(false);
-                    if (this.rbp$groupButton.mouseClicked(mouseX, mouseY, button)) {
-                        rbp$isGrouping = !rbp$isGrouping;
-                        RecipeBookPlus.groupingState = rbp$isGrouping;
-                        rbp$groupButton.setTooltip(rbp$isGrouping ? Tooltip.create(Component.translatable("recipebookplus.gui.grouping")) : Tooltip.create(Component.translatable("recipebookplus.gui.not_grouping")));
-                        rbp$groupButton.initTextureValues(Config.getUseCustomUI() ? CUSTOM_GROUP_BUTTON : GROUP_BUTTON);
-                        rbp$groupButton.setStateTriggered(rbp$isGrouping);
+                    if (this.recipebookplus$groupButton.mouseClicked(mouseX, mouseY, button)) {
+                        recipebookplus$isGrouping = !recipebookplus$isGrouping;
+                        RecipeBookPlus.groupingState = recipebookplus$isGrouping;
+                        recipebookplus$groupButton.setTooltip(recipebookplus$isGrouping ? Tooltip.create(Component.translatable("recipebookplus.gui.grouping")) : Tooltip.create(Component.translatable("recipebookplus.gui.not_grouping")));
+                        recipebookplus$groupButton.initTextureValues(Config.getUseCustomUI() ? CUSTOM_GROUP_BUTTON : GROUP_BUTTON);
+                        recipebookplus$groupButton.setStateTriggered(recipebookplus$isGrouping);
                         sendUpdateSettings();
-                        rbp$updateCollections(true, new CallbackInfo("updateCollections", true));
+                        recipebookplus$updateCollections(true, new CallbackInfo("updateCollections", true));
                         cir.setReturnValue(true);
                     } else if (this.filterButton.mouseClicked(mouseX, mouseY, button)) {
                         boolean flag = this.toggleFiltering();
@@ -614,7 +630,7 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
     }
 
     @Inject(method = "updateTabs", at = @At("HEAD"),cancellable = true)
-    private void rbp$updateTabs(CallbackInfo ci) {
+    private void recipebookplus$updateTabs(CallbackInfo ci) {
         if (Config.getModEnabled()) {
             int xPosTab;
             int yPosTab;
@@ -639,7 +655,7 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
                     if (tabButton.updateVisibility(this.book)) {
                         tabButton.setPosition(xPosTab, yPosTab + yOffset * index++);
                         tabButton.startAnimation(this.minecraft);
-                    } else if (!Config.getRecipeDiscovery()) {
+                    } else if (!Config.getRecipeDiscovery() || recipebookplus$visibleCategories.contains(tabButton.getCategory())) {
                         tabButton.visible = true;
                         tabButton.setPosition(xPosTab, yPosTab + yOffset * index++);
                         tabButton.startAnimation(this.minecraft);
@@ -649,9 +665,9 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
                     tabButton.setPosition(xPosTab, yPosTab + yOffset * index++);
                 }
                 if (Config.getUseCustomUI()) {
-                    if (tabButtons.indexOf(tabButton) == 0) ((IRecipeBookButton) tabButton).rbp$setColor(-1);
-                    else if (tabButtons.indexOf(tabButton) == 1 /*&& Config.getFavoriteEnabled()*/) ((IRecipeBookButton) tabButton).rbp$setColor(0);
-                    else ((IRecipeBookButton) tabButton).rbp$setColor(1);
+                    if (tabButtons.indexOf(tabButton) == 0) ((IRecipeBookButton) tabButton).recipebookplus$setColor(-1);
+                    else if (tabButtons.indexOf(tabButton) == 1 /*&& Config.getFavoriteEnabled()*/) ((IRecipeBookButton) tabButton).recipebookplus$setColor(0);
+                    else ((IRecipeBookButton) tabButton).recipebookplus$setColor(1);
                 }
             }
             ci.cancel();
@@ -659,7 +675,7 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
     }
 
     @Unique
-    private Tooltip rbp$getHelpButtonTooltip() {
+    private Tooltip recipebookplus$getHelpButtonTooltip() {
         return Tooltip.create(Component.translatable(
                 "recipebookplus.gui.help_tooltip",
                 Component.literal(Config.getIngredientPrefix()).withStyle(ChatFormatting.GOLD),
@@ -672,8 +688,14 @@ public abstract class RecipeBookComponentMixin implements IRecipeBookComponent, 
 
     @Unique
     @Override
-    public ItemStack rbp$getGhostItemStack(double mouseX, double mouseY) {
-        return ((IGhostRecipeAccessor) this.ghostRecipe).getGhostItem(mouseX, mouseY);
+    public ItemStack recipebookplus$getGhostItemStack(double mouseX, double mouseY) {
+        return ((IGhostRecipeAccessor) this.ghostRecipe).recipebookplus$getGhostItem(mouseX, mouseY);
+    }
+
+    @Unique
+    @Override
+    public ItemStack recipebookplus$getRecipeButtonDisplayItemStack(double mouseX, double mouseY) {
+        return ((IRecipeBookPageAccessor) this.recipeBookPage).recipebookplus$getRecipeButtonDisplayItemStack(mouseX, mouseY);
     }
 
     // endregion

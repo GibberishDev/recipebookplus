@@ -7,16 +7,12 @@ import com.gibbdev.recipebookplus.platform.services.IPlatformHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.neoforged.fml.ModList;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.network.registration.NetworkRegistry;
 
 import java.nio.file.Path;
-import java.util.List;
 
 public class NeoForgePlatformHelper implements IPlatformHelper {
 
@@ -47,7 +43,7 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
             }
         }
         PacketDistributor.sendToServer(new ServerHandshakePayloads.Handshake());
-    };
+    }
 
     @Override
     public String getModVersion() {

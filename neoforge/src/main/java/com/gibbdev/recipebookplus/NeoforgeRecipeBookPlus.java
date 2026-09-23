@@ -10,7 +10,6 @@ import com.gibbdev.recipebookplus.networking.RecipeDiscoveryPayloads;
 import com.gibbdev.recipebookplus.networking.ServerHandshakePayloads;
 import com.gibbdev.recipebookplus.platform.Services;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -18,8 +17,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
-import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
@@ -46,17 +43,13 @@ public class NeoforgeRecipeBookPlus {
         registrar.optional().playToClient(
                 ServerHandshakePayloads.RESPONSE_TYPE,
                 ServerHandshakePayloads.HandshakeResponse.CODEC,
-                (payload,context)->{
-                    ModStatus.setVersion(payload.version());
-                }
+                (payload,context)-> ModStatus.setVersion(payload.version())
         );
 
         registrar.optional().playToClient(
                 RecipeDiscoveryPayloads.TYPE_RD_PLAYER_RECIPE_DATA,
                 RecipeDiscoveryPayloads.RDPlayerData.CODEC,
-                (payload,context)->{
-                    RecipeDiscovery.processPacket(payload.tag());
-                }
+                (payload,context)-> RecipeDiscovery.processPacket(payload.tag())
         );
 
         registrar.optional().playToClient(
@@ -97,7 +90,7 @@ public class NeoforgeRecipeBookPlus {
 
     }
     @SubscribeEvent
-    private static void registerCommands(RegisterCommandsEvent event) {
+    private static void recipebookplus$onRegisterCommands(RegisterCommandsEvent event) {
         RBPRecipeCommand.register(event.getDispatcher());
     }
 

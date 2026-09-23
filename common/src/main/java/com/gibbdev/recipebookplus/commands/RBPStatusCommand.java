@@ -8,6 +8,9 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class RBPStatusCommand {
 
     public static void register(CommandDispatcher dispatcher) {
@@ -23,18 +26,12 @@ public class RBPStatusCommand {
                             player.sendSystemMessage(Component.literal("  Installed on server: ").append(installed ? "§2true§r - Version: " + ModStatus.getVersion() : "§4false§r - Using client config settings"));
                             if (installed) {
                                 if (Config.getRecipeDiscovery()) {
-                                    switch (Config.getRecipeDiscoveryMode()) {
-                                        case NONE ->
-                                                player.sendSystemMessage(Component.literal("  §6NONE§r: no recipe discovery. Recipes are granted by something else"));
-                                        case ITEM ->
-                                                player.sendSystemMessage(Component.literal("  §6ITEM§r: recipe for item is granted when that item is obtained"));
-                                        case INGREDIENT ->
-                                                player.sendSystemMessage(Component.literal("  §6INGREDIENT§r: recipe for item is granted when any ingredient is obtained"));
-                                        case INGREDIENT_AND_ITEM ->
-                                                player.sendSystemMessage(Component.literal("  §6INGREDIENT_AND_ITEM§r: recipe for item is granted when any ingredient or item itself is obtained"));
-                                        case ADVANCEMENT ->
-                                                player.sendSystemMessage(Component.literal("  §6ADVANCEMENT§r: Default minecraft recipe discovery"));
-                                    }
+                                    List<String> modes = new ArrayList<>();
+                                    if (Config.getRecipeDiscoveryItem()) modes.add("ITEM");
+                                    if (Config.getRecipeDiscoveryIngredient()) modes.add("INGREDIENT");
+                                    if (Config.getRecipeDiscoveryAdvancement()) modes.add("ADVANCEMENT");
+                                    if (modes.isEmpty()) player.sendSystemMessage(Component.literal(" Recipes cannot be discovered naturally"));
+                                    else player.sendSystemMessage(Component.literal("Recipe discovery modes: "+modes));
                                 } else {
                                     player.sendSystemMessage(Component.literal("  §6DISCOVERY§r IS OFF: All recipes are known"));
                                 }

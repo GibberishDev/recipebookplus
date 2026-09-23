@@ -1,23 +1,27 @@
 package com.gibbdev.recipebookplus;
 
-import com.electronwill.nightconfig.core.ConfigSpec;
 import com.gibbdev.recipebookplus.networking.ModStatus;
-import com.gibbdev.recipebookplus.platform.Services;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.common.ModConfigSpec;
+
 
 public class Config {
 
-    public enum RECIPE_DISCOVERY_MODE_ENUM {
-        INGREDIENT_AND_ITEM, //discover recipe from inventory change: any ingredient or item itself
-        ITEM, //discover recipe from inventory change: item itself
-        INGREDIENT, //discover recipe from inventory change: any ingredient
-        ADVANCEMENT, //discover recipe from advancement trigger: same way vanilla treats recipe discovery
-        NONE //do not discover recipes: can only be awarded with /rbp give recipe <target?> <id>
+    public enum HUDOverlayAnchor {
+        TOP_LEFT,
+        TOP_MIDDLE,
+        TOP_RIGHT,
+        CENTER_LEFT,
+        CENTER_MIDDLE,
+        CENTER_RIGHT,
+        BOTTOM_LEFT,
+        BOTTOM_MIDDLE,
+        BOTTOM_RIGHT,
+        NONE
     }
 
     public static class Client {
+
 
         public static final ModConfigSpec SPEC;
 
@@ -26,9 +30,14 @@ public class Config {
         public static final ModConfigSpec.ConfigValue<String> MODID_PREFIX;
         public static final ModConfigSpec.BooleanValue USE_CUSTOM_UI;
         public static final ModConfigSpec.BooleanValue DISPLAY_HELP_BUTTON;
-        public static final ModConfigSpec.BooleanValue ENABLE_RECIPE_BROWSER;
+        public static final ModConfigSpec.EnumValue<HUDOverlayAnchor> RECIPE_OVERLAY_POSITION_ANCHOR;
+        public static final ModConfigSpec.IntValue RECIPE_OVERLAY_X_OFFSET;
+        public static final ModConfigSpec.IntValue RECIPE_OVERLAY_Y_OFFSET;
         public static final ModConfigSpec.BooleanValue RECIPE_DISCOVERY;
-        public static final ModConfigSpec.EnumValue<RECIPE_DISCOVERY_MODE_ENUM> RECIPE_DISCOVERY_MODE;
+        public static final ModConfigSpec.BooleanValue RECIPE_DISCOVERY_ITEM;
+        public static final ModConfigSpec.BooleanValue RECIPE_DISCOVERY_INGREDIENT;
+        public static final ModConfigSpec.BooleanValue RECIPE_DISCOVERY_ADVANCEMENT;
+
 
         static {
             ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -54,28 +63,50 @@ public class Config {
                         .translation("recipebookplus.configuration.display_help")
                         .comment("If \"ON\" then there will be help element on recipe book screen that will display controls and prefixes in a tooltip")
                         .define("display_help_button", true);
-                ENABLE_RECIPE_BROWSER = builder
-                        .translation("recipebookplus.configuration.enable_recipe_browser")
-                        .comment("If \"ON\" then there will be UI option to view all known recipes across different recipe types")
-                        .define("display_help_button", true);
-
+                RECIPE_OVERLAY_POSITION_ANCHOR = builder
+                        .translation("recipebookplus.configuration.hudoverlay_anchor")
+                        .comment("Determines anchor of the hud overlay element on screen. If \"NONE\" game will skip rendering the overlay\n§6Also hides vanilla new recipes toast§r")
+                        .defineEnum("hudoverlay_anchor",HUDOverlayAnchor.TOP_LEFT);
+                RECIPE_OVERLAY_X_OFFSET = builder
+                        .translation("recipebookplus.configuration.hudoverlay_x_offset")
+                        .comment("Determines horizontal offset in pixels from screen edge. can be negative")
+                        .defineInRange("hudoverlay_x_offset", 10, -100000, 100000);
+                RECIPE_OVERLAY_Y_OFFSET = builder
+                        .translation("recipebookplus.configuration.hudoverlay_y_offset")
+                        .comment("Determines vertical offset in pixels from screen edge. can be negative")
+                        .defineInRange("hudoverlay_y_offset", 10, -100000, 100000);
                 builder.pop();
-                builder.push("server_authoritative").comment("These values will be overridden in case of mod being installed server side");
+                builder.push("server_authoritative");
 
                 RECIPE_DISCOVERY = builder
                         .translation("recipebookplus.configuration.recipe_discovery")
-                        .comment("If \"ON\" then recipes will only be shown if player has discovered them. Server authoritative setting. can ve change on client if server does not have mod installed")
-                        .define("recipe_discovery_client", true);
-                RECIPE_DISCOVERY_MODE = builder
-                        .translation("recipebookplus.configuration.recipe_discovery_mode")
-                        .comment("Defines recipe discovery mode:",
-                                "§6INGREDIENT_AND_ITEM§r:\ndiscover recipe from inventory change - any ingredient or item itself [DEFAULT]",
-                                "§6ITEM§r:\ndiscover recipe from inventory change - item itself",
-                                "§6INGREDIENT§r:\ndiscover recipe from inventory change - any ingredient",
-                                "§6ADVANCEMENT§r:\ndiscover recipe from advancement trigger - same way vanilla treats recipe discovery",
-                                "§6NONE§r:\ndo not discover recipes - can only be awarded with §u/rbprecipe give <target> <id>§r§8"
+                        .comment(
+                                "If \"ON\" then recipes will only be shown if player has discovered them",
+                                " §4OVERRIDEN IN CASE SERVER HAS MOD INSTALLED§r"
                         )
-                        .defineEnum("recipe_discovery_mode_client", RECIPE_DISCOVERY_MODE_ENUM.ADVANCEMENT);
+                        .define("recipe_discovery_client", true);
+                RECIPE_DISCOVERY_ITEM = builder
+                        .translation("recipebookplus.configuration.recipe_discovery_item")
+                        .comment(
+                                "If \"ON\" then player would receive recipes that have obtained item as a result",
+                                " §4OVERRIDEN IN CASE SERVER HAS MOD INSTALLED§r"
+                        )
+                        .define("recipe_discovery_item", false);
+                RECIPE_DISCOVERY_INGREDIENT = builder
+                        .translation("recipebookplus.configuration.recipe_discovery_ingredient")
+                        .comment(
+                                "If \"ON\" then player would receive recipes that have obtained item as an ingredient",
+                                " §4OVERRIDEN IN CASE SERVER HAS MOD INSTALLED§r"
+                        )
+                        .define("recipe_discovery_ingredient", false);
+                RECIPE_DISCOVERY_ADVANCEMENT = builder
+                        .translation("recipebookplus.configuration.recipe_discovery_advancement")
+                        .comment(
+                                "If \"ON\" then player would receive recipes that have obtained item as an ingredient",
+                                " §4OVERRIDEN IN CASE SERVER HAS MOD INSTALLED§r"
+                        )
+                        .define("recipe_discovery_advancement", true);
+
                 builder.pop();
             }
             SPEC = builder.build();
@@ -87,25 +118,30 @@ public class Config {
         public static final ModConfigSpec SPEC;
 
         public static final ModConfigSpec.BooleanValue RECIPE_DISCOVERY;
-        public static final ModConfigSpec.EnumValue<RECIPE_DISCOVERY_MODE_ENUM> RECIPE_DISCOVERY_MODE;
+        public static final ModConfigSpec.BooleanValue RECIPE_DISCOVERY_ITEM;
+        public static final ModConfigSpec.BooleanValue RECIPE_DISCOVERY_INGREDIENT;
+        public static final ModConfigSpec.BooleanValue RECIPE_DISCOVERY_ADVANCEMENT;
 
         static {
             ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
             RECIPE_DISCOVERY = builder
-                    .translation("recipebookplus.configuration.recipe_discovery")
-                    .comment("If \"ON\" then recipes will only be shown if player has discovered them. Server authoritative setting. can ve change on client if server does not have mod installed")
+                    .translation("recipebookplus.configuration.recipe_discovery_server")
+                    .comment("If \"ON\" then recipes will only be shown if player has discovered them")
                     .define("recipe_discovery", true);
-            RECIPE_DISCOVERY_MODE = builder
-                    .translation("recipebookplus.configuration.recipe_discovery_mode")
-                    .comment("Defines recipe discovery mode:",
-                            "§6INGREDIENT_AND_ITEM§r:\ndiscover recipe from inventory change - any ingredient or item itself [DEFAULT]",
-                            "§6ITEM§r:\ndiscover recipe from inventory change - item itself",
-                            "§6INGREDIENT§r:\ndiscover recipe from inventory change - any ingredient",
-                            "§6ADVANCEMENT§r:\ndiscover recipe from advancement trigger - same way vanilla treats recipe discovery",
-                            "§6NONE§r:\ndo not discover recipes - can only be awarded with §u/rbprecipe give <target> <id>§r§8"
-                    )
-                    .defineEnum("recipe_discovery_mode", RECIPE_DISCOVERY_MODE_ENUM.ADVANCEMENT);
+            RECIPE_DISCOVERY_ITEM = builder
+                    .translation("recipebookplus.configuration.recipe_discovery_item_server")
+                    .comment("If \"ON\" then player would receive recipes that have obtained item as a result")
+                    .define("recipe_discovery_item", false);
+            RECIPE_DISCOVERY_INGREDIENT = builder
+                    .translation("recipebookplus.configuration.recipe_discovery_ingredient_server")
+                    .comment("If \"ON\" then player would receive recipes that have obtained item as an ingredient")
+                    .define("recipe_discovery_ingredient", false);
+            RECIPE_DISCOVERY_ADVANCEMENT = builder
+                    .translation("recipebookplus.configuration.recipe_discovery_advancement_server")
+                    .comment("If \"ON\" then player would receive recipes from advancement triggers (vanilla way)")
+                    .define("recipe_discovery_advancement", true);
+
             SPEC = builder.build();
         }
 
@@ -131,11 +167,15 @@ public class Config {
     public static boolean getDisplayHelpButton() {
         return Client.DISPLAY_HELP_BUTTON.get();
     }
-
-    public static boolean getEnableRecipeBrowser() {
-        return Client.ENABLE_RECIPE_BROWSER.get();
+    public static HUDOverlayAnchor getRecipeOverlayAnchor() {
+        return Client.RECIPE_OVERLAY_POSITION_ANCHOR.get();
     }
-
+    public static int getRecipeOverlayXOffset() {
+        return Client.RECIPE_OVERLAY_X_OFFSET.get();
+    }
+    public static int getRecipeOverlayYOffset() {
+        return Client.RECIPE_OVERLAY_Y_OFFSET.get();
+    }
 
     public static boolean getRecipeDiscovery() {
         if (Minecraft.getInstance().isSingleplayer()) return Client.RECIPE_DISCOVERY.get();
@@ -146,12 +186,30 @@ public class Config {
         }
     }
 
-    public static RECIPE_DISCOVERY_MODE_ENUM getRecipeDiscoveryMode() {
-        if (Minecraft.getInstance().isSingleplayer()) return Client.RECIPE_DISCOVERY_MODE.get();
+    public static boolean getRecipeDiscoveryItem() {
+        if (Minecraft.getInstance().isSingleplayer()) return Client.RECIPE_DISCOVERY_ITEM.get();
         if (ModStatus.getInstalled()) {
-            return Server.RECIPE_DISCOVERY_MODE.get();
+            return Server.RECIPE_DISCOVERY_ITEM.get();
         } else {
-            return Client.RECIPE_DISCOVERY_MODE.get();
+            return Client.RECIPE_DISCOVERY_ITEM.get();
+        }
+    }
+
+    public static boolean getRecipeDiscoveryIngredient() {
+        if (Minecraft.getInstance().isSingleplayer()) return Client.RECIPE_DISCOVERY_INGREDIENT.get();
+        if (ModStatus.getInstalled()) {
+            return Server.RECIPE_DISCOVERY_INGREDIENT.get();
+        } else {
+            return Client.RECIPE_DISCOVERY_INGREDIENT.get();
+        }
+    }
+
+    public static boolean getRecipeDiscoveryAdvancement() {
+        if (Minecraft.getInstance().isSingleplayer()) return Client.RECIPE_DISCOVERY_ADVANCEMENT.get();
+        if (ModStatus.getInstalled()) {
+            return Server.RECIPE_DISCOVERY_ADVANCEMENT.get();
+        } else {
+            return Client.RECIPE_DISCOVERY_ADVANCEMENT.get();
         }
     }
     //#endregion

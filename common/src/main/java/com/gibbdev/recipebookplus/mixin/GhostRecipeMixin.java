@@ -29,17 +29,17 @@ public class GhostRecipeMixin implements IGhostRecipeAccessor {
     float time;
 
     @Unique
-    private HashMap<GhostIngredient, Rect2i> ingredientRects = new HashMap<>();
+    private HashMap<GhostIngredient, Rect2i> recipebookplus$ingredientRects = new HashMap<>();
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    public void rbp$render$ingredientRectSetter(GuiGraphics guiGraphics, Minecraft minecraft, int leftPos, int topPos, boolean offset, float partialTick, CallbackInfo ci) {
+    public void recipebookplus$render$ingredientRectSetter(GuiGraphics guiGraphics, Minecraft minecraft, int leftPos, int topPos, boolean offset, float partialTick, CallbackInfo ci) {
         if (Config.getModEnabled()) {
             if (!Screen.hasControlDown()) {
                 this.time += partialTick;
             }
-            ingredientRects.clear();
+            recipebookplus$ingredientRects.clear();
             for (int i = 0; i < this.ingredients.size(); ++i) {
-                GhostIngredient ghostrecipe$ghostingredient = (GhostIngredient) this.ingredients.get(i);
+                GhostIngredient ghostrecipe$ghostingredient = this.ingredients.get(i);
                 int j = ghostrecipe$ghostingredient.getX() + leftPos;
                 int k = ghostrecipe$ghostingredient.getY() + topPos;
                 if (i == 0 && offset) {
@@ -51,7 +51,7 @@ public class GhostRecipeMixin implements IGhostRecipeAccessor {
                 ItemStack itemstack = ghostrecipe$ghostingredient.getItem();
                 guiGraphics.renderFakeItem(itemstack, j, k);
 
-                ingredientRects.put(ghostrecipe$ghostingredient, new Rect2i(j,k,16,16));
+                recipebookplus$ingredientRects.put(ghostrecipe$ghostingredient, new Rect2i(j,k,16,16));
 
                 guiGraphics.fill(RenderType.guiGhostRecipeOverlay(), j, k, j + 16, k + 16, 822083583);
                 if (i == 0) {
@@ -64,10 +64,10 @@ public class GhostRecipeMixin implements IGhostRecipeAccessor {
 
 
     @Override
-    public ItemStack getGhostItem(double mouseX, double mouseY) {
-        if (ingredientRects.isEmpty()) return null;
+    public ItemStack recipebookplus$getGhostItem(double mouseX, double mouseY) {
+        if (recipebookplus$ingredientRects.isEmpty()) return null;
         final ItemStack[] item = {null};
-        ingredientRects.forEach((ingredient, rect) -> {
+        recipebookplus$ingredientRects.forEach((ingredient, rect) -> {
             if (rect.contains((int) mouseX, (int) mouseY)) item[0] = ingredient.getItem();
         });
         return item[0];

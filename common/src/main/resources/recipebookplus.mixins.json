@@ -6,7 +6,10 @@
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_18",
   "mixins": [
-    "ServerPlaceRecipeMixin"
+    "InventoryMixin",
+    "ClientRecipeBookMixin",
+    "ServerPlaceRecipeMixin",
+    "ServerPlayerMixin"
   ],
   "client": [
     "AbstractContainerScreenMixin",

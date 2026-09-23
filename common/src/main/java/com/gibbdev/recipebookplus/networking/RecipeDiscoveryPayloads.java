@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class RecipeDiscoveryPayloads {
     public static final ResourceLocation RL_RD_PLAYER_RECIPE_DATA = RecipeBookPlus.rl("player_recipe_data_payload");
@@ -80,7 +81,7 @@ public class RecipeDiscoveryPayloads {
 
     public static List<String> getListFromTag(CompoundTag tag) {
         List<String> list = new ArrayList<>();
-        ((ListTag) tag.get("recipes")).forEach((str) -> list.add(str.getAsString()));
+        ((ListTag) Objects.requireNonNull(tag.get("recipes"))).forEach((str) -> list.add(str.getAsString()));
         return list;
     }
 

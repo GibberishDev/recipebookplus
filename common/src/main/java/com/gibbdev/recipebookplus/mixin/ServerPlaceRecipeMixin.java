@@ -36,8 +36,8 @@ public abstract class ServerPlaceRecipeMixin <I extends RecipeInput, R extends R
     protected abstract void handleRecipeClicked(RecipeHolder<R> recipe, boolean placeAll);
 
     @Inject(method = "recipeClicked", at = @At("HEAD"), cancellable = true)
-    public void rbp$recipeClicked(ServerPlayer player, @Nullable RecipeHolder<R> recipe, boolean placeAll, CallbackInfo ci) {
-        if (Config.getModEnabled() && !Config.getRecipeDiscovery()) {
+    public void recipebookplus$recipeClicked(ServerPlayer player, @Nullable RecipeHolder<R> recipe, boolean placeAll, CallbackInfo ci) {
+        if (Config.getModEnabled()) {
             if (recipe != null) {
                 this.inventory = player.getInventory();
                 if (this.testClearGrid() || player.isCreative()) {

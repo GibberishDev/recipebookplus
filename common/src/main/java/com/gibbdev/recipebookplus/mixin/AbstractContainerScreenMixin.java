@@ -1,7 +1,6 @@
 package com.gibbdev.recipebookplus.mixin;
 
 import com.gibbdev.recipebookplus.interfaces.IAbstractContainerScreen;
-import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.inventory.Slot;
@@ -15,25 +14,25 @@ import java.awt.*;
 public abstract class AbstractContainerScreenMixin implements IAbstractContainerScreen, GuiEventListener {
 
     @Unique
-    Point mousePos = new Point();
+    Point recipebookplus$mousePos = new Point();
 
     @Shadow
     protected Slot hoveredSlot;
 
     @Override
-    public Slot rbp$getSlotUnderCursor() {
+    public Slot recipebookplus$getSlotUnderCursor() {
         return this.hoveredSlot;
     }
 
     @Unique
     @Override
     public void mouseMoved(double mouseX, double mouseY) {
-        mousePos.setLocation(mouseX, mouseY);
+        recipebookplus$mousePos.setLocation(mouseX, mouseY);
     }
 
     @Unique
     @Override
-    public Point rbp$getMousePos() {
-        return mousePos;
+    public Point recipebookplus$getMousePos() {
+        return recipebookplus$mousePos;
     }
 }

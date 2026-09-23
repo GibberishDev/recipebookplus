@@ -2,6 +2,8 @@ package com.gibbdev.recipebookplus.mixin;
 
 import com.gibbdev.recipebookplus.Config;
 import com.gibbdev.recipebookplus.Constants;
+import com.gibbdev.recipebookplus.interfaces.accessors.IRecipeBookPageAccessor;
+import com.gibbdev.recipebookplus.interfaces.accessors.IRecipeButtonAccessor;
 import com.gibbdev.recipebookplus.interfaces.accessors.IStateSwitchingButtonAccessor;
 import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
@@ -11,10 +13,12 @@ import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.recipebook.OverlayRecipeComponent;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookPage;
 import net.minecraft.client.gui.screens.recipebook.RecipeButton;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.RecipeBook;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -23,10 +27,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Mixin(RecipeBookPage.class)
-public abstract class RecipeBookPageMixin {
+public abstract class RecipeBookPageMixin implements IRecipeBookPageAccessor {
 
     @Shadow
     private Minecraft minecraft;
@@ -57,13 +63,21 @@ public abstract class RecipeBookPageMixin {
             ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID,"custom_recipe_book/page_backward"),
             ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID,"custom_recipe_book/page_backward_highlight")
     );
+    @Unique
+    private static final Map<RecipeButton, Rect2i> recipebookplus$buttonRects = new HashMap<>();
+
     @Inject(method = "init", at = @At("HEAD"), cancellable = true)
-    public void rbp$init(Minecraft minecraft, int x, int y, CallbackInfo ci) {
+    public void recipebookplus$init(Minecraft minecraft, int x, int y, CallbackInfo ci) {
         if (Config.getModEnabled() && Config.getUseCustomUI() && minecraft.player != null) {
             this.minecraft = minecraft;
             this.recipeBook = minecraft.player.getRecipeBook();
+            recipebookplus$buttonRects.clear();
             for (int i = 0; i < this.buttons.size(); ++i) {
-                (this.buttons.get(i)).setPosition(x + 11 + 25 * (i % 5), y + 31 + 25 * (i / 5));
+                RecipeButton btn = this.buttons.get(i);
+                int xPos = x + 11 + 25 * (i % 5);
+                int yPos = y + 31 + 25 * (i / 5);
+                btn.setPosition(xPos, yPos);
+                recipebookplus$buttonRects.put(btn, new Rect2i(xPos,yPos,btn.getWidth(),btn.getHeight()));
             }
 
             this.forwardButton = new StateSwitchingButton(x + 95, y + 144, 12, 8, false);
@@ -71,15 +85,15 @@ public abstract class RecipeBookPageMixin {
             this.backButton = new StateSwitchingButton(x + 38, y + 144, 12, 8, true);
             this.backButton.initTextureValues(CUSTOM_PAGE_BACKWARD_SPRITES);
 
-            ((IStateSwitchingButtonAccessor) this.forwardButton).rbp$setClickSound(SoundEvents.BOOK_PAGE_TURN);
-            ((IStateSwitchingButtonAccessor) this.backButton).rbp$setClickSound(SoundEvents.BOOK_PAGE_TURN);
+            ((IStateSwitchingButtonAccessor) this.forwardButton).recipebookplus$setClickSound(SoundEvents.BOOK_PAGE_TURN);
+            ((IStateSwitchingButtonAccessor) this.backButton).recipebookplus$setClickSound(SoundEvents.BOOK_PAGE_TURN);
 
             ci.cancel();
         }
     }
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    public void rbp$render(GuiGraphics guiGraphics, int x, int y, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
+    public void recipebookplus$render(GuiGraphics guiGraphics, int x, int y, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         if (Config.getModEnabled() && Config.getUseCustomUI()) {
 
             if (this.totalPages > 1) {
@@ -101,5 +115,15 @@ public abstract class RecipeBookPageMixin {
             this.overlay.render(guiGraphics, mouseX, mouseY, partialTick);
             ci.cancel();
         }
+    }
+
+    @Unique
+    @Override
+    public ItemStack recipebookplus$getRecipeButtonDisplayItemStack(double mouseX, double mouseY) {
+        for (RecipeButton btn : recipebookplus$buttonRects.keySet()) {
+            if (recipebookplus$buttonRects.get(btn).contains((int)mouseX,(int)mouseY))
+                return ((IRecipeButtonAccessor) btn).recipebookplus$getRecipeButtonDisplayItemStack();
+        }
+        return null;
     }
 }

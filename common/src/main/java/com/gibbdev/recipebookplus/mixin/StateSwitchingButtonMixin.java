@@ -18,9 +18,9 @@ import org.spongepowered.asm.mixin.Unique;
 @Mixin(StateSwitchingButton.class)
 public abstract class StateSwitchingButtonMixin extends AbstractWidget implements IStateSwitchingButtonAccessor {
     @Unique
-    private SoundEvent rbp$clickSound = SoundEvents.UI_BUTTON_CLICK.value();
+    private SoundEvent recipebookplus$clickSound = SoundEvents.UI_BUTTON_CLICK.value();
     @Unique
-    private SoundEvent rbp$clickSoundReleased = SoundEvents.UI_BUTTON_CLICK.value();
+    private SoundEvent recipebookplus$clickSoundReleased = SoundEvents.UI_BUTTON_CLICK.value();
     @Shadow
     protected boolean isStateTriggered;
 
@@ -31,33 +31,33 @@ public abstract class StateSwitchingButtonMixin extends AbstractWidget implement
 
     @Unique
     @Override
-    public void rbp$setClickSound(Holder.Reference<SoundEvent> soundEvent) {
-        rbp$clickSound = soundEvent.value();
-        rbp$clickSoundReleased = soundEvent.value();
+    public void recipebookplus$setClickSound(Holder.Reference<SoundEvent> soundEvent) {
+        recipebookplus$clickSound = soundEvent.value();
+        recipebookplus$clickSoundReleased = soundEvent.value();
     }
     @Unique
     @Override
-    public void rbp$setClickSound(SoundEvent soundEvent) {
-        rbp$clickSound = soundEvent;
-        rbp$clickSoundReleased = soundEvent;
+    public void recipebookplus$setClickSound(SoundEvent soundEvent) {
+        recipebookplus$clickSound = soundEvent;
+        recipebookplus$clickSoundReleased = soundEvent;
     }
 
     @Unique
     @Override
-    public void rbp$setClickSound(Holder.Reference<SoundEvent> soundEventPressed, Holder.Reference<SoundEvent> soundEventReleased) {
-        rbp$clickSound = soundEventPressed.value();
-        rbp$clickSoundReleased = soundEventReleased.value();
+    public void recipebookplus$setClickSound(Holder.Reference<SoundEvent> soundEventPressed, Holder.Reference<SoundEvent> soundEventReleased) {
+        recipebookplus$clickSound = soundEventPressed.value();
+        recipebookplus$clickSoundReleased = soundEventReleased.value();
     }
     @Unique
     @Override
-    public void rbp$setClickSound(SoundEvent soundEventPressed, SoundEvent soundEventReleased) {
-        rbp$clickSound = soundEventPressed;
-        rbp$clickSoundReleased = soundEventReleased;
+    public void recipebookplus$setClickSound(SoundEvent soundEventPressed, SoundEvent soundEventReleased) {
+        recipebookplus$clickSound = soundEventPressed;
+        recipebookplus$clickSoundReleased = soundEventReleased;
     }
 
     @Override
     public void playDownSound(@NotNull SoundManager handler) {
-        if (Config.getUseCustomUI() && Config.getModEnabled()) handler.play(SimpleSoundInstance.forUI(rbp$clickSound, 1.0F));
+        if (Config.getUseCustomUI() && Config.getModEnabled()) handler.play(SimpleSoundInstance.forUI(recipebookplus$clickSound, 1.0F));
         else handler.play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
 }

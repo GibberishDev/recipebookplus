@@ -48,7 +48,7 @@ public abstract class CookingPotScreenMixin extends AbstractContainerScreen<Cook
 
 
     @Unique
-    private StateSwitchingButton rbp$toggleRecipeBookButton;
+    private StateSwitchingButton recipebookplus$toggleRecipeBookButton;
     @Unique @Final
     public final WidgetSprites CUSTOM_RECIPE_BOOK_TOGGLE_BUTTON_SPRITES = new WidgetSprites(
             ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "custom_recipe_book/toggle_button_closed"),
@@ -57,7 +57,7 @@ public abstract class CookingPotScreenMixin extends AbstractContainerScreen<Cook
             ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "custom_recipe_book/toggle_button_open_highlight"));
 
     @Inject(method = "init", at = @At("HEAD"), cancellable = true)
-    public void rbp$init(CallbackInfo ci) {
+    public void recipebookplus$init(CallbackInfo ci) {
         if (Config.getModEnabled() && Config.getUseCustomUI() && this.minecraft !=null) {
             super.init();
             this.widthTooNarrow = this.width < 379;
@@ -65,10 +65,10 @@ public abstract class CookingPotScreenMixin extends AbstractContainerScreen<Cook
             this.recipeBookComponent.init(this.width, this.height, this.minecraft, this.widthTooNarrow, this.menu);
             this.leftPos = this.recipeBookComponent.updateScreenPosition(this.width, this.imageWidth);
             if (Configuration.ENABLE_COOKING_POT_RECIPE_BOOK.get()) {
-                rbp$toggleRecipeBookButton = new StateSwitchingButton(this.leftPos + 5, this.height / 2 - 49, 23, 21, !this.recipeBookComponent.isVisible());
-                rbp$toggleRecipeBookButton.initTextureValues(CUSTOM_RECIPE_BOOK_TOGGLE_BUTTON_SPRITES);
-                rbp$toggleRecipeBookButton.setTooltip(Tooltip.create(this.recipeBookComponent.isVisible() ? Component.translatable("recipebookplus.gui.recipe_book_button_hide") : Component.translatable("recipebookplus.gui.recipe_book_button_show")));
-                ((IStateSwitchingButtonAccessor) rbp$toggleRecipeBookButton).rbp$setClickSound(SoundEvents.BOOK_PAGE_TURN);
+                recipebookplus$toggleRecipeBookButton = new StateSwitchingButton(this.leftPos + 5, this.height / 2 - 49, 23, 21, !this.recipeBookComponent.isVisible());
+                recipebookplus$toggleRecipeBookButton.initTextureValues(CUSTOM_RECIPE_BOOK_TOGGLE_BUTTON_SPRITES);
+                recipebookplus$toggleRecipeBookButton.setTooltip(Tooltip.create(this.recipeBookComponent.isVisible() ? Component.translatable("recipebookplus.gui.recipe_book_button_hide") : Component.translatable("recipebookplus.gui.recipe_book_button_show")));
+                ((IStateSwitchingButtonAccessor) recipebookplus$toggleRecipeBookButton).recipebookplus$setClickSound(SoundEvents.BOOK_PAGE_TURN);
             } else {
                 this.recipeBookComponent.hide();
                 this.leftPos = this.recipeBookComponent.updateScreenPosition(this.width, this.imageWidth);
@@ -81,7 +81,7 @@ public abstract class CookingPotScreenMixin extends AbstractContainerScreen<Cook
     }
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    public void rbp$render(GuiGraphics gui, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+    public void recipebookplus$render(GuiGraphics gui, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
         if (Config.getModEnabled() && Config.getUseCustomUI()) {
             if (this.recipeBookComponent.isVisible() && this.widthTooNarrow) {
                 this.renderBackground(gui, mouseX, mouseY, partialTicks);
@@ -91,7 +91,7 @@ public abstract class CookingPotScreenMixin extends AbstractContainerScreen<Cook
                 this.recipeBookComponent.render(gui, mouseX, mouseY, partialTicks);
                 this.recipeBookComponent.renderGhostRecipe(gui, this.leftPos, this.topPos, false, partialTicks);
             }
-            rbp$toggleRecipeBookButton.render(gui, mouseX, mouseY, partialTicks);
+            recipebookplus$toggleRecipeBookButton.render(gui, mouseX, mouseY, partialTicks);
             this.renderMealDisplayTooltip(gui, mouseX, mouseY);
             this.renderHeatIndicatorTooltip(gui, mouseX, mouseY);
             this.recipeBookComponent.renderTooltip(gui, this.leftPos, this.topPos, mouseX, mouseY);
@@ -105,8 +105,8 @@ public abstract class CookingPotScreenMixin extends AbstractContainerScreen<Cook
             if (this.recipeBookComponent.mouseClicked(mouseX, mouseY, buttonId)) {
                 this.setFocused(this.recipeBookComponent);
                 cir.setReturnValue(true);
-            } else if (rbp$toggleRecipeBookButton.mouseClicked(mouseX, mouseY, buttonId)) {
-                rbp$toggleRecipeBook();
+            } else if (recipebookplus$toggleRecipeBookButton.mouseClicked(mouseX, mouseY, buttonId)) {
+                recipebookplus$toggleRecipeBook();
                 cir.setReturnValue(true);
             } else
             cir.setReturnValue(this.widthTooNarrow && this.recipeBookComponent.isVisible() || super.mouseClicked(mouseX, mouseY, buttonId));
@@ -115,13 +115,13 @@ public abstract class CookingPotScreenMixin extends AbstractContainerScreen<Cook
 
     @Unique
     @Override
-    public void rbp$toggleRecipeBook() {
+    public void recipebookplus$toggleRecipeBook() {
         this.recipeBookComponent.toggleVisibility();
         this.leftPos = this.recipeBookComponent.updateScreenPosition(this.width, this.imageWidth);
-        this.rbp$toggleRecipeBookButton.setPosition(this.leftPos + 5, this.height / 2 - 49);
-        rbp$toggleRecipeBookButton.setStateTriggered(!this.recipeBookComponent.isVisible());
-        rbp$toggleRecipeBookButton.initTextureValues(CUSTOM_RECIPE_BOOK_TOGGLE_BUTTON_SPRITES);
-        rbp$toggleRecipeBookButton.setTooltip(Tooltip.create(this.recipeBookComponent.isVisible() ? Component.translatable("recipebookplus.gui.recipe_book_button_hide") : Component.translatable("recipebookplus.gui.recipe_book_button_show")));
+        this.recipebookplus$toggleRecipeBookButton.setPosition(this.leftPos + 5, this.height / 2 - 49);
+        recipebookplus$toggleRecipeBookButton.setStateTriggered(!this.recipeBookComponent.isVisible());
+        recipebookplus$toggleRecipeBookButton.initTextureValues(CUSTOM_RECIPE_BOOK_TOGGLE_BUTTON_SPRITES);
+        recipebookplus$toggleRecipeBookButton.setTooltip(Tooltip.create(this.recipeBookComponent.isVisible() ? Component.translatable("recipebookplus.gui.recipe_book_button_hide") : Component.translatable("recipebookplus.gui.recipe_book_button_show")));
 
     }
 

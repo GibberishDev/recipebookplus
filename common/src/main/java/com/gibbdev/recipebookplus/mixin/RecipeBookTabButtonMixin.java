@@ -33,9 +33,9 @@ public abstract class RecipeBookTabButtonMixin extends StateSwitchingButton impl
     public RecipeBookTabButtonMixin(int x, int y, int width, int height, boolean initialState) { super(x, y, width, height, initialState); }
 
     @Unique
-    private int rbp$stickerColor = 0;
+    private int recipebookplus$stickerColor = 0;
     @Unique
-    private WidgetSprites rbp$buttonTexture = null;
+    private WidgetSprites recipebookplus$buttonTexture = null;
     @Shadow
     private float animationTime;
     @Shadow
@@ -92,7 +92,7 @@ public abstract class RecipeBookTabButtonMixin extends StateSwitchingButton impl
 
             Minecraft minecraft = Minecraft.getInstance();
             RenderSystem.disableDepthTest();
-            ResourceLocation resourcelocation = rbp$buttonTexture.get(this.isStateTriggered, this.isHovered());
+            ResourceLocation resourcelocation = recipebookplus$buttonTexture.get(this.isStateTriggered, this.isHovered());
             int xPos = this.getX();
             int yPos = this.getY() + 3;
             this.height = 20;
@@ -135,16 +135,16 @@ public abstract class RecipeBookTabButtonMixin extends StateSwitchingButton impl
 
     @Unique
     @Override
-    public void rbp$setColor(int color) {
-        if (color == -1) rbp$buttonTexture = CUSTOM_TAB_SPRITES_RED;
-        else if (color == 0) rbp$buttonTexture = CUSTOM_TAB_SPRITES_YELLOW;
+    public void recipebookplus$setColor(int color) {
+        if (color == -1) recipebookplus$buttonTexture = CUSTOM_TAB_SPRITES_RED;
+        else if (color == 0) recipebookplus$buttonTexture = CUSTOM_TAB_SPRITES_YELLOW;
         else {
             List<WidgetSprites> colors = new ArrayList<>();
             colors.add(CUSTOM_TAB_SPRITES_CYAN);
             colors.add(CUSTOM_TAB_SPRITES_MAGENTA);
             colors.add(CUSTOM_TAB_SPRITES_GREEN);
             color = (int) Math.floor(Math.random() * ((double) colors.size() - 0.01));
-            rbp$buttonTexture = colors.get(color);
+            recipebookplus$buttonTexture = colors.get(color);
         }
     }
 

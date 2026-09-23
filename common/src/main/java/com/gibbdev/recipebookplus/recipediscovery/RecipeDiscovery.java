@@ -9,9 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 
@@ -47,6 +45,10 @@ public class RecipeDiscovery {
             serverAuthored = ModStatus.getInstalled();
             CLIENT_INSTANCE = new RecipeDiscoveryLocalData(getServerID());
         }
+        if (!serverAuthored && Minecraft.getInstance().level != null) {
+            assert Minecraft.getInstance().getSingleplayerServer() != null;
+            RecipeLookup.rebuild(Minecraft.getInstance().getSingleplayerServer().getRecipeManager(), Minecraft.getInstance().getSingleplayerServer().registryAccess());
+        }
     }
 
     /**
@@ -62,7 +64,7 @@ public class RecipeDiscovery {
 
     public static void resetClient() {
         if (CLIENT_INSTANCE != null) {
-            if (CLIENT_INSTANCE instanceof RecipeDiscoveryLocalData && !serverAuthored) ((RecipeDiscoveryLocalData) CLIENT_INSTANCE).save();
+            if (CLIENT_INSTANCE instanceof RecipeDiscoveryLocalData && !serverAuthored && !Minecraft.getInstance().isSingleplayer()) ((RecipeDiscoveryLocalData) CLIENT_INSTANCE).save();
         }
         CLIENT_INSTANCE = null;
     }
@@ -87,26 +89,39 @@ public class RecipeDiscovery {
             serverAuthored = true;
             ListTag recipesListTag = (ListTag) tag.get("recipes");
             RecipeDiscoveryLocalData.knownRecipes.clear();
+            assert recipesListTag != null;
             recipesListTag.forEach((s)->RecipeDiscoveryLocalData.knownRecipes.add(s.getAsString()));
         }
     }
 
-    public List<RecipeHolder<?>> getKnownHolders(UUID uuid) {
-        return List.of();
+
+    public static List<RecipeHolder<?>> getKnownHolders(UUID uuid) {
+        if (isClient && CLIENT_INSTANCE!=null) {
+            Constants.LOG.info("CLIENT: "+CLIENT_INSTANCE.getKnownHolders(uuid).toString());
+            return CLIENT_INSTANCE.getKnownHolders(uuid);
+        }
+        else if (SERVER_INSTANCE!=null) {
+            return SERVER_INSTANCE.getKnownHolders(uuid);
+        }
+        return new ArrayList<>();
     }
 
-    public boolean hasAll(List<String> ids, UUID uuid) {
+    public static boolean hasAll(List<String> ids, UUID uuid) {
+        if (isClient && CLIENT_INSTANCE!=null) return CLIENT_INSTANCE.hasAll(ids, uuid);
+        else if (SERVER_INSTANCE!=null) return SERVER_INSTANCE.hasAll(ids, uuid);
         return false;
     }
 
-    public boolean isKnown(String id, UUID uuid) {
+    public static boolean isKnown(String id, UUID uuid) {
+        if (isClient && CLIENT_INSTANCE!=null) return CLIENT_INSTANCE.isKnown(id, uuid);
+        else if (SERVER_INSTANCE!=null) return SERVER_INSTANCE.isKnown(id, uuid);
         return false;
     }
 
     public static boolean giveRecipe(String id, UUID uuid) {
         if (isClient) {
             return CLIENT_INSTANCE.giveRecipe(id, uuid);
-        } else {
+        } else if (SERVER_INSTANCE!=null) {
             if (SERVER_INSTANCE.giveRecipe(id, uuid)) {
                 Services.PLATFORM.sendPayloadToClient(mcServer.getPlayerList().getPlayer(uuid), new RecipeDiscoveryPayloads.RDGrantOneRecipe(id));
                 return true;
@@ -118,7 +133,7 @@ public class RecipeDiscovery {
     public static List<String> giveRecipe(List<String> ids, UUID uuid) {
         if (isClient) {
             return ids.stream().filter(id -> giveRecipe(id, uuid)).toList();
-        } else {
+        } else if (SERVER_INSTANCE!=null) {
             CompoundTag idList = new CompoundTag();
             ListTag recipes = new ListTag();
             ids.stream().map(StringTag::valueOf).forEach(recipes::add);
@@ -126,12 +141,13 @@ public class RecipeDiscovery {
             Services.PLATFORM.sendPayloadToClient(mcServer.getPlayerList().getPlayer(uuid), new RecipeDiscoveryPayloads.RDGrantRecipeList(idList));
             return ids.stream().filter(id->SERVER_INSTANCE.giveRecipe(id, uuid)).toList();
         }
+        return new ArrayList<>();
     }
 
     public static boolean takeRecipe(String id, UUID uuid) {
-        if (isClient) {
+        if (isClient && CLIENT_INSTANCE!=null) {
             return CLIENT_INSTANCE.takeRecipe(id, uuid);
-        } else {
+        } else if (SERVER_INSTANCE!=null) {
             if (SERVER_INSTANCE.takeRecipe(id, uuid)) {
                 Services.PLATFORM.sendPayloadToClient(mcServer.getPlayerList().getPlayer(uuid), new RecipeDiscoveryPayloads.RDTakeOneRecipe(id));
                 return true;
@@ -141,9 +157,9 @@ public class RecipeDiscovery {
     }
 
     public static List<String> takeRecipe(List<String> ids, UUID uuid) {
-        if (isClient) {
+        if (isClient && CLIENT_INSTANCE!=null) {
             return ids.stream().filter(id -> takeRecipe(id, uuid)).toList();
-        } else {
+        } else if (SERVER_INSTANCE!=null) {
             CompoundTag idList = new CompoundTag();
             ListTag recipes = new ListTag();
             ids.stream().map(StringTag::valueOf).forEach(recipes::add);
@@ -151,18 +167,12 @@ public class RecipeDiscovery {
             Services.PLATFORM.sendPayloadToClient(mcServer.getPlayerList().getPlayer(uuid), new RecipeDiscoveryPayloads.RDTakeRecipeList(idList));
             return ids.stream().filter(id->SERVER_INSTANCE.takeRecipe(id, uuid)).toList();
         }
+        return new ArrayList<>();
     }
 
     public static void save() {
-        if (!serverAuthored && CLIENT_INSTANCE != null && !Minecraft.getInstance().isSingleplayer()) ((RecipeDiscoveryLocalData) CLIENT_INSTANCE).save();
-    }
-
-    public static void itemPickUp(ItemStack item, UUID playerUUID) {
-        if (isClient && !serverAuthored) {
-            Minecraft.getInstance().player.sendSystemMessage(Component.literal("Client: picked up and item: "+item.getDisplayName().getString()));
-        } else if (!isClient && mcServer != null) {
-            mcServer.getPlayerList().getPlayer(playerUUID).sendSystemMessage(Component.literal("Server: picked up and item: "+item.getDisplayName().getString()));
+        if (!serverAuthored && CLIENT_INSTANCE != null && !Minecraft.getInstance().isSingleplayer() && CLIENT_INSTANCE instanceof RecipeDiscoveryLocalData) {
+            ((RecipeDiscoveryLocalData) CLIENT_INSTANCE).save();
         }
-
     }
 }
