@@ -7,9 +7,9 @@ dependencies {
     implementation("net.fabricmc:fabric-loader:${fabric_loader_version}")
     implementation("net.fabricmc.fabric-api:fabric-api:${fabric_version}")
 //    Mod Menu
-    implementation "maven.modrinth:mOgUt4GM:njXb639R"
+    implementation "maven.modrinth:mOgUt4GM:kyy7dbrZ"
 //    Cloth Config
-    implementation "maven.modrinth:9s6osm5g:Nv3xnWXd"
+    implementation "maven.modrinth:9s6osm5g:fg2uyxOW"
 }
 
 loom {

@@ -13,7 +13,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,20 +22,17 @@ public class Keybinds {
 
     public static final KeyMapping RECIPE_KEYBIND = new KeyMapping(
             "recipebookplus.keymapping.recipe",
-            InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_R,
+            InputConstants.KEY_R,
             CATEGORY
     );
     public static final KeyMapping USAGE_KEYBIND = new KeyMapping(
             "recipebookplus.keymapping.usage",
-            InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_U,
+            InputConstants.KEY_U,
             CATEGORY
     );
     public static final KeyMapping MOD_KEYBIND = new KeyMapping(
             "recipebookplus.keymapping.mod",
-            InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_M,
+            InputConstants.KEY_M,
             CATEGORY
     );
 
